@@ -2,9 +2,12 @@
 # This is a code to calculate 2D axisymmetric heat transfer in cylindrical coordinates (r,z)
 
 import numpy as np
-import matplotlib
-from matplotlib import pyplot
+#import scipy
+#import matplotlib
+#from matplotlib import pyplot
 from numpy import pi
+#from scipy import special
+import analytical_nogen
 #import pandas as pd
 
 # Inputs
@@ -15,7 +18,7 @@ Ncellr=5 # Number of cells in r direction
 Ncellz=5 # Number of cells in z direction
 
 delt=0.1 # Time step in seconds
-tfinal=100 # Final time in seconds
+tfinal=1 # Final time in seconds
 
 Tinit=400 # Uniform initial temperature 
 Tamb=300 # Ambient temperature
@@ -155,3 +158,8 @@ for t in tsample:
             Tlocal[n-1,m-1]=T[GridMap[m-1,n-1],0]
     print(t)
     print(np.flip(Tlocal,0))
+r=R/2
+z=H/4
+alpha=1
+Theta=analytical_nogen.calc_nogen(H,R,z,r,tfinal,alpha,hzH,kz)
+print(Theta)
