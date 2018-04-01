@@ -17,21 +17,21 @@ H=1 # Height of the cylinder (m)
 Ncellr=5 # Number of cells in r direction
 Ncellz=5 # Number of cells in z direction
 
-delt=0.1 # Time step in seconds
-tfinal=1 # Final time in seconds
+delt=10 # Time step in seconds
+tfinal=1000 # Final time in seconds
 
 Tinit=400 # Uniform initial temperature 
 Tamb=300 # Ambient temperature
 
-kr=0.25 # Heat conductivity in r direction (W/m/K)
-kz=0.25 # Heat conductivity in z direction (W/m/K)
+kr=40 # Heat conductivity in r direction (W/m/K)
+kz=40 # Heat conductivity in z direction (W/m/K)
 
-hR=10 # Convection coefficient at r=R (W/m^2/K)
-hzH=10 # Convection coefficient at z=H (W/m^2/K)
-hz0=10 # Convection coefficient at z=0 (W/m^2/K)
+hR=200 # Convection coefficient at r=R (W/m^2/K)
+hzH=200 # Convection coefficient at z=H (W/m^2/K)
+hz0=200 # Convection coefficient at z=0 (W/m^2/K)
 
-cp=1000 # Specific heat of the cylinder (J/kgK)
-rho=800 # Density of the cylinder (kg/m^3)
+cp=490 # Specific heat of the cylinder (J/kgK)
+rho=8000 # Density of the cylinder (kg/m^3)
 delr=R/Ncellr
 delz=H/Ncellz
 
@@ -41,6 +41,15 @@ for i in range(0,Ncellz):
     GridMap[i,:]=(i*Ncellr)+np.arange(0,Ncellr,1)
 print(GridMap)
 
+# Locations of grid points
+zLoc=np.zeros((Ncellr,Ncellz))
+rLoc=np.zeros((Ncellr,Ncellz))
+for m in range(0,Ncellr):
+    for n in range(0,Ncellz):
+        rLoc[m,n]=delr*(m+0.5)
+        zLoc[m,n]=delz*(n+0.5)
+print(zLoc)
+print(rLoc)
 # Initializing T
 T=Tinit*np.ones([Ncellr*Ncellz,1])
 Tlocal=Tinit*np.ones([Ncellr,Ncellz])
@@ -59,12 +68,12 @@ for t in tsample:
         qnorthsouthcoeff=kz*np.pi*((m+0.5)**2-(m-0.5)**2)*(delr**2)/delz
         Estcoeff=rho*cp*np.pi*((m+0.5)**2-(m-0.5)**2)*(delr**2)*delz/delt
         for n in range(2,Ncellz):
-            Coeff[GridMap[m-1,n-1],GridMap[m-1,n-1]]=Estcoeff-qeastcoeff-qwestcoeff-2*qnorthsouthcoeff  # Coeff for m,n
+            Coeff[GridMap[m-1,n-1],GridMap[m-1,n-1]]=-Estcoeff-qeastcoeff-qwestcoeff-2*qnorthsouthcoeff  # Coeff for m,n
             Coeff[GridMap[m-1,n-1],GridMap[m-2,n-1]]=qwestcoeff  # Coeff for m-1,n
             Coeff[GridMap[m-1,n-1],GridMap[m,n-1]]=qeastcoeff  # Coeff for m+1,n
             Coeff[GridMap[m-1,n-1],GridMap[m-1,n-2]]=qnorthsouthcoeff  # Coeff for m,n-1
             Coeff[GridMap[m-1,n-1],GridMap[m-1,n]]=qnorthsouthcoeff  # Coeff for m,n+1
-            b[GridMap[m-1,n-1],0]=Estcoeff*T[GridMap[m-1,n-1]]
+            b[GridMap[m-1,n-1],0]=-Estcoeff*T[GridMap[m-1,n-1]]
 
 # Coefficient and forcing matrix for boundary nodes
 # r=0 boundary
@@ -74,15 +83,15 @@ for t in tsample:
     Estcoeff=rho*cp*np.pi*((m+0.5)**2-(m-0.5)**2)*(delr**2)*delz/delt
     for n in range(1,Ncellz+1):
         Coeff[GridMap[m-1,n-1],GridMap[m,n-1]]=qeastcoeff  # Coeff for m+1,n
-        b[GridMap[m-1,n-1],0]=Estcoeff*T[GridMap[m-1,n-1]]
+        b[GridMap[m-1,n-1],0]=-Estcoeff*T[GridMap[m-1,n-1]]
         if n==1:
-            Coeff[GridMap[m-1,n-1],GridMap[m-1,n-1]]=Estcoeff-qeastcoeff-qnorthsouthcoeff  # Coeff for m,n
+            Coeff[GridMap[m-1,n-1],GridMap[m-1,n-1]]=-Estcoeff-qeastcoeff-qnorthsouthcoeff  # Coeff for m,n
             Coeff[GridMap[m-1,n-1],GridMap[m-1,n]]=qnorthsouthcoeff  # Coeff for m,n+1
         elif n==Ncellz:
-            Coeff[GridMap[m-1,n-1],GridMap[m-1,n-1]]=Estcoeff-qeastcoeff-qnorthsouthcoeff  # Coeff for m,n
+            Coeff[GridMap[m-1,n-1],GridMap[m-1,n-1]]=-Estcoeff-qeastcoeff-qnorthsouthcoeff  # Coeff for m,n
             Coeff[GridMap[m-1,n-1],GridMap[m-1,n-2]]=qnorthsouthcoeff  # Coeff for m,n-1
         else:
-            Coeff[GridMap[m-1,n-1],GridMap[m-1,n-1]]=Estcoeff-qeastcoeff-2*qnorthsouthcoeff  # Coeff for m,n
+            Coeff[GridMap[m-1,n-1],GridMap[m-1,n-1]]=-Estcoeff-qeastcoeff-2*qnorthsouthcoeff  # Coeff for m,n
             Coeff[GridMap[m-1,n-1],GridMap[m-1,n-2]]=qnorthsouthcoeff  # Coeff for m,n-1
             Coeff[GridMap[m-1,n-1],GridMap[m-1,n]]=qnorthsouthcoeff  # Coeff for m,n+1
 
@@ -158,8 +167,14 @@ for t in tsample:
             Tlocal[n-1,m-1]=T[GridMap[m-1,n-1],0]
     print(t)
     print(np.flip(Tlocal,0))
-r=R/2
-z=H/4
-alpha=1
-Theta=analytical_nogen.calc_nogen(H,R,z,r,tfinal,alpha,hzH,kz)
-print(Theta)
+#r=R/2
+#z=H/4
+#tfinal=100
+
+# Analytical solution
+Theta=np.zeros((Ncellr,Ncellz))
+for m in range(0,Ncellr):
+    for n in range(0,Ncellz):        
+        Theta[n,m]=analytical_nogen.calc_nogen(H,R,zLoc[m,n],rLoc[m,n],tfinal,rho,cp,hzH,hR,kz,kr)
+Temp_analytical=Theta*(Tinit-Tamb)+Tamb
+print(np.flip(Temp_analytical,0))
