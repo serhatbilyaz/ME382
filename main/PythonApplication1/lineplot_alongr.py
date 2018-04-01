@@ -4,9 +4,11 @@ import numpy as np
 import matplotlib
 from matplotlib import pyplot
 
-def plotT(T,z,R): 
-    #z=?
+def plotT(T,z,R,rLoc): 
+    
+    #n=? Temp index in terms of z?
     #Temp=? (from T)
+    r=rLoc[:,n]
     pyplot.figure()
     pyplot.plot(r,Temp,'--',linewidth=3, label="z=")
     #pyplot.plot(ExpX_Uy,ExpUy,linewidth=3, label="Exp")
@@ -14,7 +16,7 @@ def plotT(T,z,R):
     bounds=np.array([0, R])
     pyplot.xlim(bounds) 
     pyplot.xlabel('r (m)', fontsize=10)
-    pyplot.ylabel('$T$ (K)', fontsize=10)
+    pyplot.ylabel('T (K)', fontsize=10)
     pyplot.legend(loc='upper left')
     pyplot.savefig('T_alongr.pdf', bbox_inches='tight')
     return 
