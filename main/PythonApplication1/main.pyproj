@@ -26,6 +26,12 @@
     <Compile Include="analytical_nogen.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="contourplot.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="lineplot_alongr.py">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in

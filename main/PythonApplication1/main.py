@@ -166,7 +166,7 @@ for t in tsample:
         for n in range(1,Ncellz+1):
             Tlocal[n-1,m-1]=T[GridMap[m-1,n-1],0]
     print(t)
-    print(np.flip(Tlocal,0))
+    #print(np.flip(Tlocal,0))
 #r=R/2
 #z=H/4
 #tfinal=100
@@ -176,5 +176,9 @@ Theta=np.zeros((Ncellr,Ncellz))
 for m in range(0,Ncellr):
     for n in range(0,Ncellz):        
         Theta[n,m]=analytical_nogen.calc_nogen(H,R,zLoc[m,n],rLoc[m,n],tfinal,rho,cp,hzH,hR,kz,kr)
+print("Theta is",Theta)
 Temp_analytical=Theta*(Tinit-Tamb)+Tamb
+print("Analytical solution is:")
 print(np.flip(Temp_analytical,0))
+print("Numerical solution is:")
+print(np.flip(Tlocal,0))
