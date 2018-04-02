@@ -35,10 +35,10 @@ def calc_nogen(H,R,z,r,t,rho,cp,hzH,hR,kz,kr):
         #zeta2=scipy.optimize.fsolve(eigfcnplanar,4,args=(Bi,))
         #zeta3=scipy.optimize.fsolve(eigfcnplanar,7,args=(Bi,))
         #zeta4=scipy.optimize.fsolve(eigfcnplanar,10.2,args=(Bi,))
-        print("zeta1 is %4.4f" %(zeta1))
-        print("zeta2 is %4.4f" %(zeta2))
-        print("zeta3 is %4.4f" %(zeta3))
-        print("zeta4 is %4.4f" %(zeta4))
+        #print("zeta1 is %4.4f" %(zeta1))
+        #print("zeta2 is %4.4f" %(zeta2))
+        #print("zeta3 is %4.4f" %(zeta3))
+        #print("zeta4 is %4.4f" %(zeta4))
         P_C1=P_Cn(zeta1)
         P_C2=P_Cn(zeta2)
         P_C3=P_Cn(zeta3)
@@ -48,19 +48,19 @@ def calc_nogen(H,R,z,r,t,rho,cp,hzH,hR,kz,kr):
         #print("P_C2 is %3.3f" %(P_C2))
         #print("P_C3 is %3.3f" %(P_C3))
         #print("P_C4 is %3.3f" %(P_C4))
-        P=P_C1*np.exp(-(zeta1**2)*Fo)*np.cos(zeta1*xstar)+P_C2*np.exp(-(zeta2**2)*Fo)*np.cos(zeta2*xstar)+P_C3*np.exp(-(zeta3**2)*Fo)*np.cos(zeta3*xstar)+P_C4*np.exp(-(zeta4**2)*Fo)*np.cos(zeta4*xstar)
-        print("P is %4.4f" %(P))
+        P=P_C1*np.exp(-(zeta1**2)*Fo)*np.cos(zeta1*xstar)+P_C2*np.exp(-(zeta2**2)*Fo)*np.cos(zeta2*xstar)+P_C3*np.exp(-(zeta3**2)*Fo)*np.cos(zeta3*xstar)+P_C4*np.exp(-(zeta4**2)*Fo)*np.cos(zeta4*xstar)   
         if P>1:
+            print("P is %4.4f" %(P))
             print("Unrealistic P is found!")
     else:
         zeta1=scipy.optimize.fsolve(eigfcnplanar,1,args=(Bi))
-        print("zeta1 is %4.4f" %(zeta1))
+        #print("zeta1 is %4.4f" %(zeta1))
         P_C1=P_Cn(zeta1)
         #P_C1=4*np.sin(zeta1)/(2*zeta1+np.sin(2*zeta1))
-        print("P_C1 is %3.3f" %(P_C1))
-        P=P_C1*np.exp(-(zeta1**2)*Fo)*np.cos(zeta1*xstar)
-        print("P is %4.4f" %(P))
+        #print("P_C1 is %3.3f" %(P_C1))
+        P=P_C1*np.exp(-(zeta1**2)*Fo)*np.cos(zeta1*xstar)    
         if P>1:
+            print("P is %4.4f" %(P))
             print("Unrealistic P is found!")
    
     # Cylindrical part of the solution (r direction)
@@ -100,23 +100,24 @@ def calc_nogen(H,R,z,r,t,rho,cp,hzH,hR,kz,kr):
         #print("C_C4 is %3.3f" %(C_C4))
         #print("C_C5 is %3.3f" %(C_C5))
         #print("C_C6 is %3.3f" %(C_C6))
-        C=C_C1*np.exp(-(zeta1**2)*Fo)*scipy.special.j0(zeta1*rstar)+C_C2*np.exp(-(zeta2**2)*Fo)*scipy.special.j0(zeta2*rstar)+C_C3*np.exp(-(zeta3**2)*Fo)*scipy.special.j0(zeta3*rstar)+C_C4*np.exp(-(zeta4**2)*Fo)*scipy.special.j0(zeta4*rstar)+C_C5*np.exp(-(zeta5**2)*Fo)*scipy.special.j0(zeta5*rstar)+C_C6*np.exp(-(zeta6**2)*Fo)*scipy.special.j0(zeta6*rstar)
-        print("C is %4.4f" %(C))
+        C=C_C1*np.exp(-(zeta1**2)*Fo)*scipy.special.j0(zeta1*rstar)+C_C2*np.exp(-(zeta2**2)*Fo)*scipy.special.j0(zeta2*rstar)+C_C3*np.exp(-(zeta3**2)*Fo)*scipy.special.j0(zeta3*rstar)+C_C4*np.exp(-(zeta4**2)*Fo)*scipy.special.j0(zeta4*rstar)+C_C5*np.exp(-(zeta5**2)*Fo)*scipy.special.j0(zeta5*rstar)+C_C6*np.exp(-(zeta6**2)*Fo)*scipy.special.j0(zeta6*rstar)     
         if C>1:
+            print("C is %4.4f" %(C))
             print("Unrealistic C is found!")
     else:
-        zeta1=1.9898
-        print("zeta1 is %4.4f" %(zeta1))
+        zeta1=scipy.optimize.bisect(eigfcncircular,0,2.40,args=(Bi,))
+        #print("zeta1 is %4.4f" %(zeta1))
         #zeta1=scipy.optimize.fsolve(eigfcncircular,1,args=(Bi),xtol=1.0e-12)
-        zeta1=scipy.optimize.fmin_tnc(eigfcncircular,1,args=(Bi),bounds=((0.0,2.41),))
+        #zeta1=scipy.optimize.fmin_tnc(eigfcncircular,1,args=(Bi),bounds=((0.0,2.41),))
         if zeta1>2.41:
             print("Unrealistic zeta1 is found!")
         C_C1=C_Cn(zeta1)
         #C_C1=(2/zeta1)*scipy.special.j1(zeta1)/(scipy.special.j0(zeta1)**2+scipy.special.j1(zeta1)**2)
-        print("C_C1 is %3.3f" %(C_C1))
+        #print("C_C1 is %3.3f" %(C_C1))
         C=C_C1*np.exp(-(zeta1**2)*Fo)*scipy.special.j0(zeta1*rstar)
-        print("C is %4.4f" %(C))
+        
         if C>1:
+            print("C is %4.4f" %(C))
             print("Unrealistic C is found!")
     # Overall solution is the combination of planar and cylindrical
     Theta=P*C

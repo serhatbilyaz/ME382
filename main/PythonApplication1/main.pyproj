@@ -29,7 +29,7 @@
     <Compile Include="contourplot.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="lineplot_alongr.py">
+    <Compile Include="lineplot.py">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
