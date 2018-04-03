@@ -1,0 +1,2 @@
+#This script creates animation
+
