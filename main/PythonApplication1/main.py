@@ -9,10 +9,11 @@ from numpy import pi
 #from scipy import special
 import analytical_nogen
 import lineplot
+import contourplot
 #import pandas as pd
 
 # Inputs
-R=1 # Radius of the cylinder (m)
+R=1.2 # Radius of the cylinder (m)
 H=1 # Height of the cylinder (m)
 
 Ncellr=10 # Number of cells in r direction
@@ -170,20 +171,27 @@ for t in tsample:
     #print(np.flip(Tlocal,0))
 
 
-# Analytical solution (Uncomment if you want to solve the entire domain)
-#Theta=np.zeros((Ncellr,Ncellz))
-#for m in range(0,Ncellr):
-#    for n in range(0,Ncellz):        
-#        Theta[n,m]=analytical_nogen.calc_nogen(H,R,zLoc[m,n],rLoc[m,n],tfinal,rho,cp,hzH,hR,kz,kr)
-#print("Theta is",Theta)
-#Temp_analytical=Theta*(Tinit-Tamb)+Tamb
-#print("Analytical solution is:")
-#print(np.flip(Temp_analytical,0))
+#Analytical solution (Uncomment if you want to solve the entire domain)
+
+Theta=np.zeros((Ncellr,Ncellz))
+for m in range(0,Ncellr):
+    for n in range(0,Ncellz):        
+        Theta[n,m]=analytical_nogen.calc_nogen(H,R,zLoc[m,n],rLoc[m,n],tfinal,rho,cp,hzH,hR,kz,kr)
+print("Theta is",Theta)
+Temp_analytical=Theta*(Tinit-Tamb)+Tamb
+print("Analytical solution is:")
+print(np.flip(Temp_analytical,0))
 
 print("Numerical solution is:")
 print(np.flip(Tlocal,0))
 
+
+# Obtain contour subplots 
+contourplot.compareanaly(Tlocal,Temp_analytical,rLoc,zLoc,tfinal)
+
+
 # Plotting along r at certain z
+
 z=H/2; # Plot location in z
 n=(z/delz)-0.5 #Temp index in terms of z
 n=int(np.floor(n)) # Find the closest integer to be an index
