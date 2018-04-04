@@ -11,6 +11,7 @@ import finiteDifference
 import analytical_nogen
 import lineplot
 import contourplot
+import createanimation
 #import pandas as pd
 
 
@@ -32,7 +33,7 @@ qgen=0 # Volumetric heat generation (W/m^3)
 kr=40 # Heat conductivity in r direction (W/m/K)
 kz=40 # Heat conductivity in z direction (W/m/K)
 
-hR=20 # Convection coefficient at r=R (W/m^2/K)
+hR=200 # Convection coefficient at r=R (W/m^2/K)
 hzH=20 # Convection coefficient at z=H (W/m^2/K)
 hz0=20 # Convection coefficient at z=0 (W/m^2/K)
 
@@ -46,7 +47,9 @@ GridMap=np.zeros((Ncellr,Ncellz),dtype=np.int)
 for i in range(0,Ncellz):
     GridMap[i,:]=(i*Ncellr)+np.arange(0,Ncellr,1)
 print(GridMap)
-
+#reshapedGP=GridMap.reshape((Ncellr*Ncellr,))
+#print(GridMap.reshape((Ncellr*Ncellr,)))
+#print(reshapedGP.reshape((Ncellr,Ncellz)))
 # Locations of grid points
 zLoc=np.zeros((Ncellr,Ncellz))
 rLoc=np.zeros((Ncellr,Ncellz))
@@ -61,10 +64,10 @@ print(rLoc)
 
 tsample=np.linspace(0,tfinal,tfinal/delt)
 
-T_all=finiteDifference.uniformgen(GridMap,kr,kz,hR,hz0,hzH,rho,cp,R,H,Ncellr,Ncellz,delr,delz,delt,Tinit,Tamb,tsample,qgen)
+T_FD_all=finiteDifference.uniformgen(GridMap,kr,kz,hR,hz0,hzH,rho,cp,R,H,Ncellr,Ncellz,delr,delz,delt,Tinit,Tamb,tsample,qgen)
 
 Tlocal=np.empty([Ncellr,Ncellz])
-T=T_all[:,tsample.shape[0]-1]
+T=T_FD_all[:,tsample.shape[0]-1]
 
 for m in range(1,Ncellr+1):
     for n in range(1,Ncellz+1):
@@ -73,6 +76,7 @@ for m in range(1,Ncellr+1):
 #print(np.flip(Tlocal,0))
 print("Numerical solution is:")
 print(np.flip(Tlocal,0))
+#print(T.reshape((Ncellr,Ncellz)))
 
 #Analytical solution (Uncomment if you want to solve the entire domain from probe solver)
 
@@ -86,6 +90,9 @@ print(np.flip(Tlocal,0))
 
 # Solve the whole domain for all times analytically
 T_analy_all=analytical_nogen.calc_whole(H,R,zLoc,rLoc,tsample,rho,cp,hzH,hR,kz,kr,Tinit,Tamb,GridMap,Ncellr,Ncellz)
+
+
+#createanimation.compareanaly(T_FD_all,T_analy_all,rLoc,zLoc,tsample,Ncellr,Ncellz)
 
 Temp_analytical=np.empty([Ncellr,Ncellz])
 T_analy_array=T_analy_all[:,tsample.shape[0]-1]

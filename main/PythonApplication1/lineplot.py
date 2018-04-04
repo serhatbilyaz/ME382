@@ -1,4 +1,4 @@
-# This script plots the radial distribution of temperature for a given z
+# This script contains lineplot subroutines
 
 import numpy as np
 import matplotlib
