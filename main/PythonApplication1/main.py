@@ -27,7 +27,7 @@ tfinal=1000 # Final time in seconds
 Tinit=400 # Uniform initial temperature 
 Tamb=300 # Ambient temperature
 
-qgen=0 # Volumetri heat generation (W/m^3)
+qgen=0 # Volumetric heat generation (W/m^3)
 
 kr=40 # Heat conductivity in r direction (W/m/K)
 kz=40 # Heat conductivity in z direction (W/m/K)
