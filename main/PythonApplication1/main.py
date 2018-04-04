@@ -74,21 +74,30 @@ for m in range(1,Ncellr+1):
 print("Numerical solution is:")
 print(np.flip(Tlocal,0))
 
-#Analytical solution (Uncomment if you want to solve the entire domain)
+#Analytical solution (Uncomment if you want to solve the entire domain from probe solver)
 
-Theta=np.zeros((Ncellr,Ncellz))
-for m in range(0,Ncellr):
-    for n in range(0,Ncellz):        
-        Theta[n,m]=analytical_nogen.calc_nogen(H,R,zLoc[m,n],rLoc[m,n],tfinal,rho,cp,hzH,hR,kz,kr)
-print("Theta is",Theta)
-Temp_analytical=Theta*(Tinit-Tamb)+Tamb
+#Theta=np.zeros((Ncellr,Ncellz))
+#for m in range(0,Ncellr):
+#    for n in range(0,Ncellz):        
+#        Temp_analytical[n,m]=analytical_nogen.calc_probe(H,R,zLoc[m,n],rLoc[m,n],tfinal,rho,cp,hzH,hR,kz,kr)
+
+#print("Analytical solution is:")
+#print(np.flip(Temp_analytical,0))
+
+# Solve the whole domain for all times analytically
+T_analy_all=analytical_nogen.calc_whole(H,R,zLoc,rLoc,tsample,rho,cp,hzH,hR,kz,kr,Tinit,Tamb,GridMap,Ncellr,Ncellz)
+
+Temp_analytical=np.empty([Ncellr,Ncellz])
+T_analy_array=T_analy_all[:,tsample.shape[0]-1]
+
+for m in range(1,Ncellr+1):
+    for n in range(1,Ncellz+1):
+        Temp_analytical[n-1,m-1]=T_analy_array[GridMap[m-1,n-1],]
 print("Analytical solution is:")
 print(np.flip(Temp_analytical,0))
 
-
 # Obtain contour subplots 
 contourplot.compareanaly(Tlocal,Temp_analytical,rLoc,zLoc,tfinal)
-
 
 # Plotting along r at certain z
 
@@ -101,8 +110,7 @@ zplot_alongr=zLoc[0,n] #Evaluate real r (According to rounded index)
 Temp_FD_alongr=Tlocal[n,:] 
 Temp_analy_alongr=np.zeros((Ncellr))
 for m in range(0,Ncellr):
-    Temp_analy_alongr[m]=analytical_nogen.calc_nogen(H,R,zplot_alongr,rplot_alongr[m],tfinal,rho,cp,hzH,hR,kz,kr)
-Temp_analy_alongr=Temp_analy_alongr*(Tinit-Tamb)+Tamb
+    Temp_analy_alongr[m]=analytical_nogen.calc_probe(H,R,zplot_alongr,rplot_alongr[m],tfinal,rho,cp,hzH,hR,kz,kr,Tinit,Tamb)
 #Temp_analy_alongr=Temp_analytical[n,:] # Use if you want to extract it from the entire domain solution (see above)
 
 lineplot.alongr_plotT(Temp_FD_alongr,Temp_analy_alongr,rplot_alongr,zplot_alongr,tfinal,R)
@@ -117,8 +125,7 @@ zplot_alongz=zLoc[m,:] # z locations for plotting
 Temp_FD_alongz=Tlocal[:,m]
 Temp_analy_alongz=np.zeros((Ncellz))
 for n in range(0,Ncellz):
-    Temp_analy_alongz[n]=analytical_nogen.calc_nogen(H,R,zplot_alongz[n],rplot_alongz,tfinal,rho,cp,hzH,hR,kz,kr)
-Temp_analy_alongz=Temp_analy_alongz*(Tinit-Tamb)+Tamb
+    Temp_analy_alongz[n]=analytical_nogen.calc_probe(H,R,zplot_alongz[n],rplot_alongz,tfinal,rho,cp,hzH,hR,kz,kr,Tinit,Tamb)
 
 #Temp_analy_alongz=Temp_analytical[:,m] # Use if you want to extract it from the entire domain solution (see above)
 
