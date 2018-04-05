@@ -33,7 +33,7 @@ qgen=0 # Volumetric heat generation (W/m^3)
 kr=40 # Heat conductivity in r direction (W/m/K)
 kz=40 # Heat conductivity in z direction (W/m/K)
 
-hR=200 # Convection coefficient at r=R (W/m^2/K)
+hR=20 # Convection coefficient at r=R (W/m^2/K)
 hzH=20 # Convection coefficient at z=H (W/m^2/K)
 hz0=20 # Convection coefficient at z=0 (W/m^2/K)
 
