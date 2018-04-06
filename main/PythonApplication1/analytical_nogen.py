@@ -194,22 +194,28 @@ def calc_whole(H,R,zLoc,rLoc,tsample,rho,cp,hzH,hR,kz,kr,Tinit,Tamb,GridMap,Ncel
     T_analy_all[:,0]=T.reshape(Ncellr*Ncellz,)
     for i in range(1,tsample.shape[0]):
         t=tsample[i]
-        print("t=%4.4f" %(t))
+        print("t_analy=%4.4f" %(t))
         Fo_P=alpha_P*t/(L**2)
-        print("Fo planar is %4.4f" %(Fo_P))
+        #print("Fo planar is %4.4f" %(Fo_P))
         Fo_C=alpha_C*t/(R**2)
-        print("Fo cylindrical is %4.4f" %(Fo_C))
-        for m in range(0,Ncellr):
-            for n in range(0,Ncellz):
+        #print("Fo cylindrical is %4.4f" %(Fo_C))
+        count=0
+        for m in range(0,Ncellz):
+            for n in range(0,Ncellr):
     # PLanar part of the solution (z direction)
-                xstar=(zLoc[m,n]-L)/L
-                if Fo_P<0.2:
-                    P=P_C1*np.exp(-(P_zeta1**2)*Fo_P)*np.cos(P_zeta1*xstar)+P_C2*np.exp(-(P_zeta2**2)*Fo_P)*np.cos(P_zeta2*xstar)+P_C3*np.exp(-(P_zeta3**2)*Fo_P)*np.cos(P_zeta3*xstar)+P_C4*np.exp(-(P_zeta4**2)*Fo_P)*np.cos(P_zeta4*xstar)+P_C5*np.exp(-(P_zeta5**2)*Fo_P)*np.cos(P_zeta5*xstar)+P_C6*np.exp(-(P_zeta6**2)*Fo_P)*np.cos(P_zeta6*xstar)   
-                else:
-                    P=P_C1*np.exp(-(P_zeta1**2)*Fo_P)*np.cos(P_zeta1*xstar)
-                if P>1:
-                    print("P is %4.4f" %(P))
-                    print("Unrealistic P is found!")
+                xstar=np.abs((zLoc[m,n]-L)/L)
+                if xstar>0:
+                    if Fo_P<0.2:
+                        P=P_C1*np.exp(-(P_zeta1**2)*Fo_P)*np.cos(P_zeta1*xstar)+P_C2*np.exp(-(P_zeta2**2)*Fo_P)*np.cos(P_zeta2*xstar)+P_C3*np.exp(-(P_zeta3**2)*Fo_P)*np.cos(P_zeta3*xstar)+P_C4*np.exp(-(P_zeta4**2)*Fo_P)*np.cos(P_zeta4*xstar)+P_C5*np.exp(-(P_zeta5**2)*Fo_P)*np.cos(P_zeta5*xstar)+P_C6*np.exp(-(P_zeta6**2)*Fo_P)*np.cos(P_zeta6*xstar)   
+                    else:
+                        P=P_C1*np.exp(-(P_zeta1**2)*Fo_P)*np.cos(P_zeta1*xstar)
+                    #if P>1:
+                    #    print("P is %4.4f" %(P))
+                    #    print("Unrealistic P is found!")
+                    #else:
+                    #    print("P is %4.4f" %(P))
+                    #print("P is %4.4f" %(P))
+
     # Cylindrical part of the solution (r direction)
                 rstar=rLoc[m,n]/R
 
@@ -217,13 +223,17 @@ def calc_whole(H,R,zLoc,rLoc,tsample,rho,cp,hzH,hR,kz,kr,Tinit,Tamb,GridMap,Ncel
                     C=C_C1*np.exp(-(C_zeta1**2)*Fo_C)*scipy.special.j0(C_zeta1*rstar)+C_C2*np.exp(-(C_zeta2**2)*Fo_C)*scipy.special.j0(C_zeta2*rstar)+C_C3*np.exp(-(C_zeta3**2)*Fo_C)*scipy.special.j0(C_zeta3*rstar)+C_C4*np.exp(-(C_zeta4**2)*Fo_C)*scipy.special.j0(C_zeta4*rstar)+C_C5*np.exp(-(C_zeta5**2)*Fo_C)*scipy.special.j0(C_zeta5*rstar)+C_C6*np.exp(-(C_zeta6**2)*Fo_C)*scipy.special.j0(C_zeta6*rstar)     
                 else:
                     C=C_C1*np.exp(-(C_zeta1**2)*Fo_C)*scipy.special.j0(C_zeta1*rstar)
-                if C>1:
-                    print("C is %4.4f" %(C))
-                    print("Unrealistic C is found!")
+                #if C>1:
+                #    print("C is %4.4f" %(C))
+                #    print("Unrealistic C is found!")
+                
+                #print("C is %4.4f" %(C))
     # Overall solution is the combination of planar and cylindrical
                 Theta=P*C
+                #print("For xstar=%4.4f and rstar=%4.4f, P is %4.4f and C is %4.4f " %(xstar,rstar,P,C))
                 Temp_analytical=Theta*(Tinit-Tamb)+Tamb
-                T_analy_all[GridMap[m,n],i]=Temp_analytical
+                T_analy_all[count,i]=Temp_analytical
+                count=count+1
 
     return T_analy_all
 

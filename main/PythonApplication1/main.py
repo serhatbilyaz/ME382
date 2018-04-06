@@ -19,8 +19,8 @@ import createanimation
 R=1.2 # Radius of the cylinder (m)
 H=1 # Height of the cylinder (m)
 
-Ncellr=10 # Number of cells in r direction
-Ncellz=10 # Number of cells in z direction
+Ncellr=12 # Number of cells in r direction
+Ncellz=5 # Number of cells in z direction
 
 delt=10 # Time step in seconds
 tfinal=1000 # Final time in seconds
@@ -42,98 +42,51 @@ rho=8000 # Density of the cylinder (kg/m^3)
 delr=R/Ncellr
 delz=H/Ncellz
 
-# Grid numbering
-GridMap=np.zeros((Ncellr,Ncellz),dtype=np.int)
+# Grid numbering (Row increase => r increase, Column increase => z increase)
+GridMap=np.zeros((Ncellz,Ncellr),dtype=np.int)
 for i in range(0,Ncellz):
     GridMap[i,:]=(i*Ncellr)+np.arange(0,Ncellr,1)
 print(GridMap)
-#reshapedGP=GridMap.reshape((Ncellr*Ncellr,))
-#print(GridMap.reshape((Ncellr*Ncellr,)))
-#print(reshapedGP.reshape((Ncellr,Ncellz)))
-# Locations of grid points
-zLoc=np.zeros((Ncellr,Ncellz))
-rLoc=np.zeros((Ncellr,Ncellz))
-for m in range(0,Ncellr):
-    for n in range(0,Ncellz):
-        rLoc[m,n]=delr*(m+0.5)
-        zLoc[m,n]=delz*(n+0.5)
+
+#FD solution uses transposed GridMap (Column increase => r increase, Row increase => z increase)
+GridMapFD=GridMap
+GridMapFD=np.transpose(GridMapFD)
+print(GridMapFD)
+
+# Locations of grid points (Consistent with original GridMap, r increases in row direction, z increases in column direction)
+zLoc=np.zeros((Ncellz,Ncellr))
+rLoc=np.zeros((Ncellz,Ncellr))
+for m in range(0,Ncellz):
+    for n in range(0,Ncellr):
+        rLoc[m,n]=delr*(n+0.5)
+        zLoc[m,n]=delz*(m+0.5)
 print(zLoc)
 print(rLoc)
 
+# Sample the time domain
+tsample=np.linspace(0,tfinal,tfinal/delt+1)
+print(tsample)
+
+# Initialize T_FD_all and T_analy_all
+T_FD_all=np.empty((Ncellr*Ncellz,tsample.shape[0]))*np.nan
+T_analy_all=np.empty((Ncellr*Ncellz,tsample.shape[0]))*np.nan
+
 # Finite Difference Solution
+T_FD_all=finiteDifference.uniformgen(GridMapFD,kr,kz,hR,hz0,hzH,rho,cp,R,H,Ncellr,Ncellz,delr,delz,delt,Tinit,Tamb,tsample,qgen)
 
-tsample=np.linspace(0,tfinal,tfinal/delt)
-
-T_FD_all=finiteDifference.uniformgen(GridMap,kr,kz,hR,hz0,hzH,rho,cp,R,H,Ncellr,Ncellz,delr,delz,delt,Tinit,Tamb,tsample,qgen)
-
-Tlocal=np.empty([Ncellr,Ncellz])
-T=T_FD_all[:,tsample.shape[0]-1]
-
-for m in range(1,Ncellr+1):
-    for n in range(1,Ncellz+1):
-        Tlocal[n-1,m-1]=T[GridMap[m-1,n-1],]
-     
-#print(np.flip(Tlocal,0))
-print("Numerical solution is:")
-print(np.flip(Tlocal,0))
-#print(T.reshape((Ncellr,Ncellz)))
-
-#Analytical solution (Uncomment if you want to solve the entire domain from probe solver)
-
-#Theta=np.zeros((Ncellr,Ncellz))
-#for m in range(0,Ncellr):
-#    for n in range(0,Ncellz):        
-#        Temp_analytical[n,m]=analytical_nogen.calc_probe(H,R,zLoc[m,n],rLoc[m,n],tfinal,rho,cp,hzH,hR,kz,kr)
-
-#print("Analytical solution is:")
-#print(np.flip(Temp_analytical,0))
-
-# Solve the whole domain for all times analytically
-T_analy_all=analytical_nogen.calc_whole(H,R,zLoc,rLoc,tsample,rho,cp,hzH,hR,kz,kr,Tinit,Tamb,GridMap,Ncellr,Ncellz)
+# Analytical Solution
+#T_analy_all=analytical_nogen.calc_whole(H,R,zLoc,rLoc,tsample,rho,cp,hzH,hR,kz,kr,Tinit,Tamb,GridMap,Ncellr,Ncellz)
 
 
-#createanimation.compareanaly(T_FD_all,T_analy_all,rLoc,zLoc,tsample,Ncellr,Ncellz)
-
-Temp_analytical=np.empty([Ncellr,Ncellz])
-T_analy_array=T_analy_all[:,tsample.shape[0]-1]
-
-for m in range(1,Ncellr+1):
-    for n in range(1,Ncellz+1):
-        Temp_analytical[n-1,m-1]=T_analy_array[GridMap[m-1,n-1],]
-print("Analytical solution is:")
-print(np.flip(Temp_analytical,0))
-
+tplot=tfinal
 # Obtain contour subplots 
-contourplot.compareanaly(Tlocal,Temp_analytical,rLoc,zLoc,tfinal)
-
+contourplot.compareanaly(T_FD_all,T_analy_all,rLoc,zLoc,tsample,delt,Ncellr,Ncellz,tplot)
 # Plotting along r at certain z
-
-z=H/2; # Plot location in z
-n=(z/delz)-0.5 #Temp index in terms of z
-n=int(np.floor(n)) # Find the closest integer to be an index
-rplot_alongr=rLoc[:,n] #r locations for plotting
-zplot_alongr=zLoc[0,n] #Evaluate real r (According to rounded index)
-#print(rplot_alongr[3])
-Temp_FD_alongr=Tlocal[n,:] 
-Temp_analy_alongr=np.zeros((Ncellr))
-for m in range(0,Ncellr):
-    Temp_analy_alongr[m]=analytical_nogen.calc_probe(H,R,zplot_alongr,rplot_alongr[m],tfinal,rho,cp,hzH,hR,kz,kr,Tinit,Tamb)
-#Temp_analy_alongr=Temp_analytical[n,:] # Use if you want to extract it from the entire domain solution (see above)
-
-lineplot.alongr_plotT(Temp_FD_alongr,Temp_analy_alongr,rplot_alongr,zplot_alongr,tfinal,R)
-
+zplot=H/2 # Plot location
+lineplot.alongr_plotT(T_FD_all,T_analy_all,rLoc,zLoc,tsample,R,delz,delt,Ncellr,Ncellz,zplot,tplot)
 # Plotting along z at certain r
-r=R/2 # Plot location in r
-m=(r/delr)-0.5 #Temp index in terms of r
-m=int(np.floor(m)) # Find the closest integer to be an index
-rplot_alongz=rLoc[m,0] # Evaluate real r (According to rounded index)
-zplot_alongz=zLoc[m,:] # z locations for plotting
+rplot=R/2 # Plot location
+lineplot.alongz_plotT(T_FD_all,T_analy_all,rLoc,zLoc,tsample,R,delz,delt,Ncellr,Ncellz,rplot,tplot)
 
-Temp_FD_alongz=Tlocal[:,m]
-Temp_analy_alongz=np.zeros((Ncellz))
-for n in range(0,Ncellz):
-    Temp_analy_alongz[n]=analytical_nogen.calc_probe(H,R,zplot_alongz[n],rplot_alongz,tfinal,rho,cp,hzH,hR,kz,kr,Tinit,Tamb)
-
-#Temp_analy_alongz=Temp_analytical[:,m] # Use if you want to extract it from the entire domain solution (see above)
-
-lineplot.alongz_plotT(Temp_FD_alongz,Temp_analy_alongz,rplot_alongz,zplot_alongz,tfinal,H)
+# Create animation 
+#createanimation.compareanaly(T_FD_all,T_analy_all,rLoc,zLoc,tsample,Ncellr,Ncellz)

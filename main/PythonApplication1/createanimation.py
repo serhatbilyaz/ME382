@@ -17,12 +17,12 @@ def compareanaly(T_FD_all,T_analy_all,rLoc,zLoc,tsample,Ncellr,Ncellz):
     ax2.set_xlabel("r (m)")
     ax2.set_ylabel("z (m)")
     
-    FD=ax1.contourf(rLoc,zLoc,np.empty((Ncellr,Ncellz)),np.arange(390,401,0.2))
-    Analy=ax2.contourf(rLoc,zLoc,np.empty((Ncellr,Ncellz)),np.arange(390,401,0.2))
+    FD=ax1.contourf(rLoc,zLoc,np.empty((Ncellz,Ncellr)),np.arange(390,401,0.2))
+    Analy=ax2.contourf(rLoc,zLoc,np.empty((Ncellz,Ncellr)),np.arange(390,401,0.2))
 
     def init():
-        FD=ax1.contourf(rLoc,zLoc,np.empty((Ncellr,Ncellz)),np.arange(390,401,0.2))
-        Analy=ax2.contourf(rLoc,zLoc,np.empty((Ncellr,Ncellz)),np.arange(390,401,0.2))
+        FD=ax1.contourf(rLoc,zLoc,np.empty((Ncellz,Ncellr)),np.arange(390,401,0.2))
+        Analy=ax2.contourf(rLoc,zLoc,np.empty((Ncellz,Ncellr)),np.arange(390,401,0.2))
         cbar=fig.colorbar(FD,ax=ax1)
         cbar.ax.set_ylabel('Temperature (K)')
         cbar2=fig.colorbar(Analy,ax=ax2)
@@ -32,8 +32,11 @@ def compareanaly(T_FD_all,T_analy_all,rLoc,zLoc,tsample,Ncellr,Ncellz):
         return (FD,Analy)
 
     def animate(i):
-        T_FD=T_FD_all[:,i].reshape((Ncellr,Ncellz))
-        T_analy=T_analy_all[:,i].reshape((Ncellr,Ncellz))
+        T_FD=T_FD_all[:,i]
+        T_FD=T_FD.reshape((Ncellz,Ncellr))
+        T_analy=T_analy_all[:,i]
+        T_analy=T_analy.reshape((Ncellz,Ncellr))
+
         t=tsample[i]
         FD=ax1.contourf(rLoc,zLoc,T_FD,np.arange(390,401,0.2))
         Analy=ax2.contourf(rLoc,zLoc,T_analy,np.arange(390,401,0.2))

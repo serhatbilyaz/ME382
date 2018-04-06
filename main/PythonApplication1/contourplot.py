@@ -5,9 +5,15 @@ import matplotlib
 from matplotlib import pyplot
 
 
-def compareanaly(T_FD,T_analy,rLoc,zLoc,t):
-    T_FD=np.rot90(T_FD,3)
-    T_analy=np.rot90(T_analy,3)
+def compareanaly(T_FD_all,T_analy_all,rLoc,zLoc,tsample,delt,Ncellr,Ncellz,t):
+    i=t/delt
+    i=int(np.around(i)) # Time index
+    t=tsample[i]
+    T_FD=T_FD_all[:,i]
+    T_FD=T_FD.reshape((Ncellz,Ncellr))
+    T_analy=T_analy_all[:,i]
+    T_analy=T_analy.reshape((Ncellz,Ncellr))
+
     fig, (ax1,ax2)=pyplot.subplots(figsize=(12,4),ncols=2)
     FD=ax1.contourf(rLoc,zLoc,T_FD,np.arange(390,401,0.2))
     cbar=fig.colorbar(FD,ax=ax1)
