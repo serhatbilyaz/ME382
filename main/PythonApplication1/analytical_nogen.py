@@ -16,7 +16,7 @@ from scipy import optimize
 #kz=0.25
 #kr=0.25
 def calc_probe(H,R,z,r,t,rho,cp,hzH,hR,kz,kr,Tinit,Tamb):
-    
+    Tavg_all=np.empty((tsample.shape[0],))*np.nan
     # Planar part of the solution (z direction)
     L=H/2
     xstar=(z-L)/L
@@ -126,7 +126,8 @@ def calc_probe(H,R,z,r,t,rho,cp,hzH,hR,kz,kr,Tinit,Tamb):
     return Temp_analytical
 
 def calc_whole(H,R,zLoc,rLoc,tsample,rho,cp,hzH,hR,kz,kr,Tinit,Tamb,GridMap,Ncellr,Ncellz):
-
+    Tavg_all=np.empty((tsample.shape[0],))*np.nan
+    Tavg_all[0]=Tinit
     T_analy_all=np.empty((Ncellr*Ncellz,tsample.shape[0]))
     # Calculate zeta_n and C_n for planar
     L=H/2
@@ -234,8 +235,11 @@ def calc_whole(H,R,zLoc,rLoc,tsample,rho,cp,hzH,hR,kz,kr,Tinit,Tamb,GridMap,Ncel
                 Temp_analytical=Theta*(Tinit-Tamb)+Tamb
                 T_analy_all[count,i]=Temp_analytical
                 count=count+1
+        
+        Tavg=np.mean(T_analy_all[:,i],axis=0)
+        Tavg_all[i]=Tavg
 
-    return T_analy_all
+    return (T_analy_all,Tavg_all)
 
 
 def eigfcnplanar(zeta,Bi):

@@ -6,8 +6,11 @@ from matplotlib import pyplot
 
 
 def compareanaly(T_FD_all,T_analy_all,rLoc,zLoc,tsample,delt,Ncellr,Ncellz,t):
+    print("Creating contourplot ...")
     i=t/delt
     i=int(np.around(i)) # Time index
+    if i==tsample.shape[0]:
+        i=i-1
     t=tsample[i]
     T_FD=T_FD_all[:,i]
     T_FD=T_FD.reshape((Ncellz,Ncellr))
@@ -15,13 +18,13 @@ def compareanaly(T_FD_all,T_analy_all,rLoc,zLoc,tsample,delt,Ncellr,Ncellz,t):
     T_analy=T_analy.reshape((Ncellz,Ncellr))
 
     fig, (ax1,ax2)=pyplot.subplots(figsize=(12,4),ncols=2)
-    FD=ax1.contourf(rLoc,zLoc,T_FD,np.arange(390,401,0.2))
+    FD=ax1.contourf(rLoc,zLoc,T_FD-273,np.arange(25,175,1))
     cbar=fig.colorbar(FD,ax=ax1)
     cbar.ax.set_ylabel('Temperature (K)')
     ax1.set_xlabel("r (m)")
     ax1.set_ylabel("z (m)")
     ax1.set_title("Finite Difference at t=%4.2f s" %(t))
-    Analy=ax2.contourf(rLoc,zLoc,T_analy,np.arange(390,401,0.2))
+    Analy=ax2.contourf(rLoc,zLoc,T_analy-273,np.arange(25,175,1))
     cbar2=fig.colorbar(Analy,ax=ax2)
     cbar2.ax.set_ylabel('Temperature (K)')
     ax2.set_xlabel("r (m)")

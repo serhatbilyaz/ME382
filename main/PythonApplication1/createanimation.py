@@ -7,6 +7,7 @@ from matplotlib import animation
 
 
 def compareanaly(T_FD_all,T_analy_all,rLoc,zLoc,tsample,Ncellr,Ncellz):
+    print("Creating contourplot animation ...")
     #T_FD=np.rot90(T_FD,3)
     #T_analy=np.rot90(T_analy,3)
 
@@ -17,12 +18,12 @@ def compareanaly(T_FD_all,T_analy_all,rLoc,zLoc,tsample,Ncellr,Ncellz):
     ax2.set_xlabel("r (m)")
     ax2.set_ylabel("z (m)")
     
-    FD=ax1.contourf(rLoc,zLoc,np.empty((Ncellz,Ncellr)),np.arange(390,401,0.2))
-    Analy=ax2.contourf(rLoc,zLoc,np.empty((Ncellz,Ncellr)),np.arange(390,401,0.2))
+    FD=ax1.contourf(rLoc,zLoc,np.empty((Ncellz,Ncellr)),np.arange(25,200,1))
+    Analy=ax2.contourf(rLoc,zLoc,np.empty((Ncellz,Ncellr)),np.arange(25,200,1))
 
     def init():
-        FD=ax1.contourf(rLoc,zLoc,np.empty((Ncellz,Ncellr)),np.arange(390,401,0.2))
-        Analy=ax2.contourf(rLoc,zLoc,np.empty((Ncellz,Ncellr)),np.arange(390,401,0.2))
+        FD=ax1.contourf(rLoc,zLoc,np.empty((Ncellz,Ncellr)),np.arange(25,200,1))
+        Analy=ax2.contourf(rLoc,zLoc,np.empty((Ncellz,Ncellr)),np.arange(25,200,1))
         cbar=fig.colorbar(FD,ax=ax1)
         cbar.ax.set_ylabel('Temperature (K)')
         cbar2=fig.colorbar(Analy,ax=ax2)
@@ -38,8 +39,8 @@ def compareanaly(T_FD_all,T_analy_all,rLoc,zLoc,tsample,Ncellr,Ncellz):
         T_analy=T_analy.reshape((Ncellz,Ncellr))
 
         t=tsample[i]
-        FD=ax1.contourf(rLoc,zLoc,T_FD,np.arange(390,401,0.2))
-        Analy=ax2.contourf(rLoc,zLoc,T_analy,np.arange(390,401,0.2))
+        FD=ax1.contourf(rLoc,zLoc,T_FD-273,np.arange(25,200,1))
+        Analy=ax2.contourf(rLoc,zLoc,T_analy-273,np.arange(25,200,1))
         ax1.set_title("Finite Difference at t=%4.2f s" %(t))
         ax2.set_title("Analytical at t=%4.2f s" %(t))
 
