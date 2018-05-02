@@ -9,11 +9,11 @@ from numpy import pi
 #from scipy import special
 import finiteDifference
 import analytical_nogen
-import lineplot
-import contourplot
-import createanimation
+#import lineplot
+#import contourplot
+#import createanimation
 #import pandas as pd
-
+import csv
 
 # Inputs
 R=0.009 # Radius of the cylinder (m)
@@ -105,26 +105,46 @@ T_analy_all=Analy_data[0]
 Tavg_analy_all=Analy_data[1]
 print(T_FD_all[:,100])
 
-tplot=1200
+# writing finite dif temp to csv file 
+writing_FD = open('Name_FD_all.csv', 'w')
+with writing_FD:
+    writer = csv.writer(writing_FD)
+    writer.writerows(T_FD_all)
+
+# writing analytical temp to csv file 
+writing_analy = open('Name_analy_all.csv', 'w')
+with writing_analy:
+    writer = csv.writer(writing_analy)
+    writer.writerows(T_analy_all)
+
+parameters = [Ncellr, Ncellz, delt, tfinal]
+print(parameters)
+
+# writing 'Ncellr, Ncellz, delt, tfinal' to csv file 
+np.savetxt('Name_parameters.csv', parameters)
+
+print("files written to csv")
+
+#tplot=1200
 # Obtain contour subplots 
-contourplot.compareanaly(T_FD_all,T_analy_all,rLoc,zLoc,tsample,delt,Ncellr,Ncellz,tplot)
+#contourplot.compareanaly(T_FD_all,T_analy_all,rLoc,zLoc,tsample,delt,Ncellr,Ncellz,tplot)
 
 # Obtain lineplots
 # Plotting along r at certain z
-zplot=H/2 # Plot location
-lineplot.alongr_plotT(T_FD_all,T_analy_all,rLoc,zLoc,tsample,R,delz,delt,Ncellr,Ncellz,zplot,tplot)
+#zplot=H/2 # Plot location
+#lineplot.alongr_plotT(T_FD_all,T_analy_all,rLoc,zLoc,tsample,R,delz,delt,Ncellr,Ncellz,zplot,tplot)
 # Plotting along z at certain r
-rplot=R/2 # Plot location
-lineplot.alongz_plotT(T_FD_all,T_analy_all,rLoc,zLoc,tsample,H,delr,delt,Ncellr,Ncellz,rplot,tplot)
+#rplot=R/2 # Plot location
+#lineplot.alongz_plotT(T_FD_all,T_analy_all,rLoc,zLoc,tsample,H,delr,delt,Ncellr,Ncellz,rplot,tplot)
 # Plotting over t on r=R and at certain z
-lineplot.surfaceTovertime_onR(T_FD_all,T_analy_all,GridMap,GridMapFD,zLoc,tsample,R,delz,Ncellr,zplot)
+#lineplot.surfaceTovertime_onR(T_FD_all,T_analy_all,GridMap,GridMapFD,zLoc,tsample,R,delz,Ncellr,zplot)
 # Plotting vent gas amount over time
-lineplot.mG_overtime(mG_FD_all,tsample)
+#lineplot.mG_overtime(mG_FD_all,tsample)
 # Plotting Pvapor over time
-lineplot.Pvap_overtime(Pvap_FD_all,tsample)
+#lineplot.Pvap_overtime(Pvap_FD_all,tsample)
 # Plotting Tavg over time
-lineplot.Tavg_overtime(Tavg_FD_all,Tavg_analy_all,tsample)
+#lineplot.Tavg_overtime(Tavg_FD_all,Tavg_analy_all,tsample)
 # Plotting VolL over time
-lineplot.VL_overtime(VolL_FD_all,tsample)
+#lineplot.VL_overtime(VolL_FD_all,tsample)
 # Create animation 
-createanimation.compareanaly(T_FD_all,T_analy_all,rLoc,zLoc,tsample,Ncellr,Ncellz)
+#createanimation.compareanaly(T_FD_all,T_analy_all,rLoc,zLoc,tsample,Ncellr,Ncellz)
