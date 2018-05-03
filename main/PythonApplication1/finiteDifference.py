@@ -128,31 +128,33 @@ def uniformgen(GridMap,kr,kz,hR,hz0,hzH,rho,cp,R,H,Ncellr,Ncellz,delr,delz,delt,
                 Coeff[GridMap[m-1,n-1],GridMap[m-2,n-1]]=qwestcoeff  # Coeff for m-1,n
 
         #   print(Coeff)
-        print("Condition number of Coeff is %8.8f" %(np.linalg.cond(Coeff)))
+        #print("Condition number of Coeff is %8.8f" %(np.linalg.cond(Coeff)))
         #   print(b)    
         #T=np.linalg.solve(Coeff,b)
 
-        T=gmres(Coeff, b)   
-                #print(TT2)
+        Tgmres=gmres(Coeff, b)   
+        T=np.array(Tgmres[0])
+        gmresinfo=Tgmres[1]
+        #print(TT2)
 
         # Vent gas release calculations
         Tavg=np.mean(T)
-        Pvap=10**(A_antoine-(B_antoine/(Tavg+C_antoine)))
-        Vol_L=(mtot*Runicons*Tavg/Mgas-(Pvap+P0)*Vol_T)/(rho*Runicons*Tavg/Mgas-(Pvap+P0))
-        print("VolL is %6.6f"%(Vol_L))
-        mL=rho*Vol_L
-        print("mL is %5.6f"%(mL))
-        mG=mtot-mL
-        print("mG is %2.12f"%(mG))
-        print("Tavg is %4.4f"%(Tavg))
-        Pvap_all[i]=Pvap
-        mG_all[i]=mG
+        #Pvap=10**(A_antoine-(B_antoine/(Tavg+C_antoine)))
+        #Vol_L=(mtot*Runicons*Tavg/Mgas-(Pvap+P0)*Vol_T)/(rho*Runicons*Tavg/Mgas-(Pvap+P0))
+        #print("VolL is %6.6f"%(Vol_L))
+        #mL=rho*Vol_L
+        #print("mL is %5.6f"%(mL))
+        #mG=mtot-mL
+        #print("mG is %2.12f"%(mG))
+        #print("Tavg is %4.4f"%(Tavg))
+        #Pvap_all[i]=Pvap
+        #mG_all[i]=mG
         Tavg_all[i]=Tavg
 
 
         T_all[:,i]=T.reshape((Ncellr*Ncellz,))
     print(T_all[:,i])
-    return (T_all,Pvap_all,mG_all,Tavg_all)
+    return (T_all,Tavg_all)
 
 # This functions solves with Arrhenius generation term if you want to have Qgen due to Arrhenius only, give qgen=0
 def Arrheniusgen(GridMap,kr,kz,hR,hz0,hzH,rho,cp,R,H,Ncellr,Ncellz,delr,delz,delt,Tinit,Tamb,tsample,qgen,Q0,E,Picard,Newton,Nmax,tol,A_antoine,B_antoine,C_antoine,Mgas,P0):
@@ -408,18 +410,18 @@ def Arrheniusgen(GridMap,kr,kz,hR,hz0,hzH,rho,cp,R,H,Ncellr,Ncellz,delr,delz,del
         Tavg=np.mean(T)
         if np.isnan(Tavg):
             print("NaN Tavg is found")
-        Pvap=10**(A_antoine-(B_antoine/(Tavg+C_antoine)))
-        Vol_L=(mtot*Runicons*Tavg/Mgas-(Pvap+P0)*Vol_T)/(rho*Runicons*Tavg/Mgas-(Pvap+P0))
-        print("VolL is %6.6f"%(Vol_L))
-        mL=rho*Vol_L
-        print("mL is %5.6f"%(mL))
-        mG=mtot-mL
-        print("mG is %2.12f"%(mG))
+        #Pvap=10**(A_antoine-(B_antoine/(Tavg+C_antoine)))
+        #Vol_L=(mtot*Runicons*Tavg/Mgas-(Pvap+P0)*Vol_T)/(rho*Runicons*Tavg/Mgas-(Pvap+P0))
+        #print("VolL is %6.6f"%(Vol_L))
+        #mL=rho*Vol_L
+        #print("mL is %5.6f"%(mL))
+        #mG=mtot-mL
+        #print("mG is %2.12f"%(mG))
         print("Tavg is %4.4f"%(Tavg))
-        Pvap_all[i]=Pvap
-        mG_all[i]=mG
-        VolL_all[i]=Vol_L
+        #Pvap_all[i]=Pvap
+        #mG_all[i]=mG
+        #VolL_all[i]=Vol_L
         Tavg_all[i]=Tavg
         T_all[:,i]=Tknew.reshape(Ncellr*Ncellz,)
                 
-    return (T_all,Pvap_all,mG_all,Tavg_all,VolL_all)
+    return (T_all,Tavg_all)

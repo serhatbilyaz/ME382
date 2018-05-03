@@ -95,10 +95,7 @@ T_analy_all=np.empty((Ncellr*Ncellz,tsample.shape[0]))*np.nan
 FD_all_data=finiteDifference.uniformgen(GridMapFD,kr,kz,hR,hz0,hzH,rho,cp,R,H,Ncellr,Ncellz,delr,delz,delt,Tinit,Tamb,tsample,qgen,A_antoine,B_antoine,C_antoine,Mgas,P0)
 #FD_all_data=finiteDifference.Arrheniusgen(GridMapFD,kr,kz,hR,hz0,hzH,rho,cp,R,H,Ncellr,Ncellz,delr,delz,delt,Tinit,Tamb,tsample,qgen,Q0,Ea,Picard,Newton,Nmax,tol,A_antoine,B_antoine,C_antoine,Mgas,P0)
 T_FD_all=FD_all_data[0]
-Pvap_FD_all=FD_all_data[1]
-mG_FD_all=FD_all_data[2]
-Tavg_FD_all=FD_all_data[3]
-#VolL_FD_all=FD_all_data[4]
+Tavg_FD_all=FD_all_data[1]
 # Analytical Solution
 Analy_data=analytical_nogen.calc_whole(H,R,zLoc,rLoc,tsample,rho,cp,hzH,hR,kz,kr,Tinit,Tamb,GridMap,Ncellr,Ncellz)
 T_analy_all=Analy_data[0]
