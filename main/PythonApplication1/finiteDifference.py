@@ -4,6 +4,9 @@ import numpy as np
 #import scipy
 from numpy import pi
 #from scipy import special
+from scipy import linalg
+from scipy.sparse.linalg import gmres
+
 
 def uniformgen(GridMap,kr,kz,hR,hz0,hzH,rho,cp,R,H,Ncellr,Ncellz,delr,delz,delt,Tinit,Tamb,tsample,qgen,A_antoine,B_antoine,C_antoine,Mgas,P0):
     Runicons=8.314 # Universal gas constant in J/molK
@@ -127,9 +130,12 @@ def uniformgen(GridMap,kr,kz,hR,hz0,hzH,rho,cp,R,H,Ncellr,Ncellz,delr,delz,delt,
         #   print(Coeff)
         print("Condition number of Coeff is %8.8f" %(np.linalg.cond(Coeff)))
         #   print(b)    
-        T=np.linalg.solve(Coeff,b)
+        #T=np.linalg.solve(Coeff,b)
 
-                # Vent gas release calculations
+        T=gmres(Coeff, b)   
+                #print(TT2)
+
+        # Vent gas release calculations
         Tavg=np.mean(T)
         Pvap=10**(A_antoine-(B_antoine/(Tavg+C_antoine)))
         Vol_L=(mtot*Runicons*Tavg/Mgas-(Pvap+P0)*Vol_T)/(rho*Runicons*Tavg/Mgas-(Pvap+P0))

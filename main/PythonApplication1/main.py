@@ -92,13 +92,13 @@ T_FD_all=np.empty((Ncellr*Ncellz,tsample.shape[0]))*np.nan
 T_analy_all=np.empty((Ncellr*Ncellz,tsample.shape[0]))*np.nan
 
 # Finite Difference Solution
-#FD_all_data=finiteDifference.uniformgen(GridMapFD,kr,kz,hR,hz0,hzH,rho,cp,R,H,Ncellr,Ncellz,delr,delz,delt,Tinit,Tamb,tsample,qgen,A_antoine,B_antoine,C_antoine,Mgas,P0)
-FD_all_data=finiteDifference.Arrheniusgen(GridMapFD,kr,kz,hR,hz0,hzH,rho,cp,R,H,Ncellr,Ncellz,delr,delz,delt,Tinit,Tamb,tsample,qgen,Q0,Ea,Picard,Newton,Nmax,tol,A_antoine,B_antoine,C_antoine,Mgas,P0)
+FD_all_data=finiteDifference.uniformgen(GridMapFD,kr,kz,hR,hz0,hzH,rho,cp,R,H,Ncellr,Ncellz,delr,delz,delt,Tinit,Tamb,tsample,qgen,A_antoine,B_antoine,C_antoine,Mgas,P0)
+#FD_all_data=finiteDifference.Arrheniusgen(GridMapFD,kr,kz,hR,hz0,hzH,rho,cp,R,H,Ncellr,Ncellz,delr,delz,delt,Tinit,Tamb,tsample,qgen,Q0,Ea,Picard,Newton,Nmax,tol,A_antoine,B_antoine,C_antoine,Mgas,P0)
 T_FD_all=FD_all_data[0]
 Pvap_FD_all=FD_all_data[1]
 mG_FD_all=FD_all_data[2]
 Tavg_FD_all=FD_all_data[3]
-VolL_FD_all=FD_all_data[4]
+#VolL_FD_all=FD_all_data[4]
 # Analytical Solution
 Analy_data=analytical_nogen.calc_whole(H,R,zLoc,rLoc,tsample,rho,cp,hzH,hR,kz,kr,Tinit,Tamb,GridMap,Ncellr,Ncellz)
 T_analy_all=Analy_data[0]
@@ -111,14 +111,15 @@ with writing_FD:
     writer = csv.writer(writing_FD)
     writer.writerows(T_FD_all)
 
-# writing analytical temp to csv file 
+# writing finite dif temp to csv file 
 writing_analy = open('Name_analy_all.csv', 'w')
 with writing_analy:
     writer = csv.writer(writing_analy)
     writer.writerows(T_analy_all)
 
+
 parameters = [Ncellr, Ncellz, delt, tfinal]
-print(parameters)
+#print(parameters)
 
 # writing 'Ncellr, Ncellz, delt, tfinal' to csv file 
 np.savetxt('Name_parameters.csv', parameters)
