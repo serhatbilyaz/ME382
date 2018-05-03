@@ -47,7 +47,8 @@ Q0=1*10**22  # Arrhenius generation term constant
 Picard=1# Use Picard's method
 Newton=0  # Use Newton's method (Actually, don't use it now, it is not stable)
 Nmax=10000  # Max number of iterations
-tol=1*10**-4 # Accepted tolerance
+tol=1*10**-4 # Accepted tolerance, also used for GMRES
+GM=1    #if GM=0, np solver, else uses gmres to solve for T
 
 #Inputs for vent gas release
 P0=100000 # Background pressure in Pa
@@ -92,7 +93,7 @@ T_FD_all=np.empty((Ncellr*Ncellz,tsample.shape[0]))*np.nan
 T_analy_all=np.empty((Ncellr*Ncellz,tsample.shape[0]))*np.nan
 
 # Finite Difference Solution
-FD_all_data=finiteDifference.uniformgen(GridMapFD,kr,kz,hR,hz0,hzH,rho,cp,R,H,Ncellr,Ncellz,delr,delz,delt,Tinit,Tamb,tsample,qgen,A_antoine,B_antoine,C_antoine,Mgas,P0)
+FD_all_data=finiteDifference.uniformgen(GridMapFD,kr,kz,hR,hz0,hzH,rho,cp,R,H,Ncellr,Ncellz,delr,delz,delt,Tinit,Tamb,tsample,qgen,A_antoine,B_antoine,C_antoine,Mgas,P0, GM, tol)
 #FD_all_data=finiteDifference.Arrheniusgen(GridMapFD,kr,kz,hR,hz0,hzH,rho,cp,R,H,Ncellr,Ncellz,delr,delz,delt,Tinit,Tamb,tsample,qgen,Q0,Ea,Picard,Newton,Nmax,tol,A_antoine,B_antoine,C_antoine,Mgas,P0)
 T_FD_all=FD_all_data[0]
 Tavg_FD_all=FD_all_data[1]

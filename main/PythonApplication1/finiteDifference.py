@@ -8,7 +8,7 @@ from scipy import linalg
 from scipy.sparse.linalg import gmres
 
 
-def uniformgen(GridMap,kr,kz,hR,hz0,hzH,rho,cp,R,H,Ncellr,Ncellz,delr,delz,delt,Tinit,Tamb,tsample,qgen,A_antoine,B_antoine,C_antoine,Mgas,P0):
+def uniformgen(GridMap,kr,kz,hR,hz0,hzH,rho,cp,R,H,Ncellr,Ncellz,delr,delz,delt,Tinit,Tamb,tsample,qgen,A_antoine,B_antoine,C_antoine,Mgas,P0, GM, tol):
     Runicons=8.314 # Universal gas constant in J/molK
     Vol_T=(np.pi*R**2)*H
     mtot=rho*Vol_T
@@ -130,12 +130,22 @@ def uniformgen(GridMap,kr,kz,hR,hz0,hzH,rho,cp,R,H,Ncellr,Ncellz,delr,delz,delt,
         #   print(Coeff)
         #print("Condition number of Coeff is %8.8f" %(np.linalg.cond(Coeff)))
         #   print(b)    
+       
+      
         #T=np.linalg.solve(Coeff,b)
 
-        Tgmres=gmres(Coeff, b)   
-        T=np.array(Tgmres[0])
-        gmresinfo=Tgmres[1]
+        #Tgmres=gmres(Coeff, b)   
+        #T=np.array(Tgmres[0])
+        #gmresinfo=Tgmres[1]
         #print(TT2)
+
+        if GM==0:
+            T=np.linalg.solve(Coeff,b)
+        else: 
+            Tgmres=gmres(Coeff, b, x0=None, tol=tol)
+            T=np.array(Tgmres[0])
+            gmresinfo=Tgmres[1]
+
 
         # Vent gas release calculations
         Tavg=np.mean(T)
