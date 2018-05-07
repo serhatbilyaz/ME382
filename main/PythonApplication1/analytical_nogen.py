@@ -17,6 +17,7 @@ from scipy import optimize
 #kr=0.25
 def calc_probe(H,R,z,r,t,rho,cp,hzH,hR,kz,kr,Tinit,Tamb):
     Tavg_all=np.empty((tsample.shape[0],))*np.nan
+    Err_all=np.empty((tsample.shape[0],3))*np.nan
     # Planar part of the solution (z direction)
     L=H/2
     xstar=(z-L)/L
@@ -33,6 +34,7 @@ def calc_probe(H,R,z,r,t,rho,cp,hzH,hR,kz,kr,Tinit,Tamb):
         zeta4=scipy.optimize.bisect(eigfcnplanar,9.4248,10.99,args=(Bi,))
         zeta5=scipy.optimize.bisect(eigfcnplanar,12.5664,14.137,args=(Bi,))
         zeta6=scipy.optimize.bisect(eigfcnplanar,15.7080,17.278,args=(Bi,))
+        zeta7=scipy.optimize.bisect(eigfcnplanar,18.8497,20.41,args=(Bi,))
         #zeta1=scipy.optimize.fsolve(eigfcnplanar,1,args=(Bi,))
         #zeta2=scipy.optimize.fsolve(eigfcnplanar,4,args=(Bi,))
         #zeta3=scipy.optimize.fsolve(eigfcnplanar,7,args=(Bi,))
@@ -47,12 +49,16 @@ def calc_probe(H,R,z,r,t,rho,cp,hzH,hR,kz,kr,Tinit,Tamb):
         P_C4=P_Cn(zeta4)
         P_C5=P_Cn(zeta5)
         P_C6=P_Cn(zeta6)
+        P_C7=P_Cn(zeta7)
         #P_C1=4*np.sin(zeta1)/(2*zeta1+np.sin(2*zeta1))
         #print("P_C1 is %3.3f" %(P_C1))
         #print("P_C2 is %3.3f" %(P_C2))
         #print("P_C3 is %3.3f" %(P_C3))
         #print("P_C4 is %3.3f" %(P_C4))
-        P=P_C1*np.exp(-(zeta1**2)*Fo)*np.cos(zeta1*xstar)+P_C2*np.exp(-(zeta2**2)*Fo)*np.cos(zeta2*xstar)+P_C3*np.exp(-(zeta3**2)*Fo)*np.cos(zeta3*xstar)+P_C4*np.exp(-(zeta4**2)*Fo)*np.cos(zeta4*xstar)+P_C5*np.exp(-(zeta5**2)*Fo)*np.cos(zeta5*xstar)+P_C6*np.exp(-(zeta6**2)*Fo)*np.cos(zeta6*xstar)   
+        P6=P_C1*np.exp(-(zeta1**2)*Fo)*np.cos(zeta1*xstar)+P_C2*np.exp(-(zeta2**2)*Fo)*np.cos(zeta2*xstar)+P_C3*np.exp(-(zeta3**2)*Fo)*np.cos(zeta3*xstar)+P_C4*np.exp(-(zeta4**2)*Fo)*np.cos(zeta4*xstar)+P_C5*np.exp(-(zeta5**2)*Fo)*np.cos(zeta5*xstar)+P_C6*np.exp(-(zeta6**2)*Fo)*np.cos(zeta6*xstar)   
+        P7=P_C1*np.exp(-(zeta1**2)*Fo)*np.cos(zeta1*xstar)+P_C2*np.exp(-(zeta2**2)*Fo)*np.cos(zeta2*xstar)+P_C3*np.exp(-(zeta3**2)*Fo)*np.cos(zeta3*xstar)+P_C4*np.exp(-(zeta4**2)*Fo)*np.cos(zeta4*xstar)+P_C5*np.exp(-(zeta5**2)*Fo)*np.cos(zeta5*xstar)+P_C6*np.exp(-(zeta6**2)*Fo)*np.cos(zeta6*xstar)+P_C7*np.exp(-(zeta7**2)*Fo)*np.cos(zeta7*xstar)   
+        Err6_7=np.abs(Tinit-Tamb)*np.abs(P6-P7)/P7
+        print(Err6_7)
         if P>1:
             print("P is %4.4f" %(P))
             print("Unrealistic P is found!")
@@ -127,6 +133,7 @@ def calc_probe(H,R,z,r,t,rho,cp,hzH,hR,kz,kr,Tinit,Tamb):
 
 def calc_whole(H,R,zLoc,rLoc,tsample,rho,cp,hzH,hR,kz,kr,Tinit,Tamb,GridMap,Ncellr,Ncellz):
     Tavg_all=np.empty((tsample.shape[0],))*np.nan
+    Err_all=np.empty((tsample.shape[0],3))*np.nan
     Tavg_all[0]=Tinit
     T_analy_all=np.empty((Ncellr*Ncellz,tsample.shape[0]))
     # Calculate zeta_n and C_n for planar
@@ -142,6 +149,9 @@ def calc_whole(H,R,zLoc,rLoc,tsample,rho,cp,hzH,hR,kz,kr,Tinit,Tamb,GridMap,Ncel
     P_zeta4=scipy.optimize.bisect(eigfcnplanar,9.4248,10.99,args=(Bi_P,))
     P_zeta5=scipy.optimize.bisect(eigfcnplanar,12.5664,14.137,args=(Bi_P,))
     P_zeta6=scipy.optimize.bisect(eigfcnplanar,15.7080,17.278,args=(Bi_P,))
+    P_zeta7=scipy.optimize.bisect(eigfcnplanar,18.8497,20.41,args=(Bi_P,))
+    P_zeta8=scipy.optimize.bisect(eigfcnplanar,21.9912,23.56,args=(Bi_P,))
+    P_zeta9=scipy.optimize.bisect(eigfcnplanar,25.1328,26.7,args=(Bi_P,))
     #print("zeta1 is %4.4f" %(P_zeta1))
     #print("zeta2 is %4.4f" %(P_zeta2))
     #print("zeta3 is %4.4f" %(P_zeta3))
@@ -154,6 +164,9 @@ def calc_whole(H,R,zLoc,rLoc,tsample,rho,cp,hzH,hR,kz,kr,Tinit,Tamb,GridMap,Ncel
     P_C4=P_Cn(P_zeta4)
     P_C5=P_Cn(P_zeta5)
     P_C6=P_Cn(P_zeta6)
+    P_C7=P_Cn(P_zeta7)
+    P_C8=P_Cn(P_zeta8)
+    P_C9=P_Cn(P_zeta9)
         #print("P_C1 is %3.3f" %(P_C1))
         #print("P_C2 is %3.3f" %(P_C2))
         #print("P_C3 is %3.3f" %(P_C3))
@@ -171,6 +184,9 @@ def calc_whole(H,R,zLoc,rLoc,tsample,rho,cp,hzH,hR,kz,kr,Tinit,Tamb,GridMap,Ncel
     C_zeta4=scipy.optimize.bisect(eigfcncircular,10.1735,11.79,args=(Bi_C,))
     C_zeta5=scipy.optimize.bisect(eigfcncircular,13.3237,14.93,args=(Bi_C,))
     C_zeta6=scipy.optimize.bisect(eigfcncircular,16.470,18.07,args=(Bi_C,))
+    C_zeta7=scipy.optimize.bisect(eigfcncircular,19.6159,21.21,args=(Bi_C,))
+    C_zeta8=scipy.optimize.bisect(eigfcncircular,22.7601,24.35,args=(Bi_C,))
+    C_zeta9=scipy.optimize.bisect(eigfcncircular,25.9037,27.49,args=(Bi_C,))
     #print("zeta1 is %4.4f" %(C_zeta1))
     #print("zeta2 is %4.4f" %(C_zeta2))
     #print("zeta3 is %4.4f" %(C_zeta3))
@@ -183,6 +199,10 @@ def calc_whole(H,R,zLoc,rLoc,tsample,rho,cp,hzH,hR,kz,kr,Tinit,Tamb,GridMap,Ncel
     C_C4=C_Cn(C_zeta4)
     C_C5=C_Cn(C_zeta5)
     C_C6=C_Cn(C_zeta6)
+    C_C7=C_Cn(C_zeta7)
+    C_C8=C_Cn(C_zeta8)
+    C_C9=C_Cn(C_zeta9)
+
         #print("C_C1 is %3.3f" %(C_C1))
         #print("C_C2 is %3.3f" %(C_C2))
         #print("C_C3 is %3.3f" %(C_C3))
@@ -207,9 +227,19 @@ def calc_whole(H,R,zLoc,rLoc,tsample,rho,cp,hzH,hR,kz,kr,Tinit,Tamb,GridMap,Ncel
                 xstar=np.abs((zLoc[m,n]-L)/L)
                 if xstar>0:
                     if Fo_P<0.2:
-                        P=P_C1*np.exp(-(P_zeta1**2)*Fo_P)*np.cos(P_zeta1*xstar)+P_C2*np.exp(-(P_zeta2**2)*Fo_P)*np.cos(P_zeta2*xstar)+P_C3*np.exp(-(P_zeta3**2)*Fo_P)*np.cos(P_zeta3*xstar)+P_C4*np.exp(-(P_zeta4**2)*Fo_P)*np.cos(P_zeta4*xstar)+P_C5*np.exp(-(P_zeta5**2)*Fo_P)*np.cos(P_zeta5*xstar)+P_C6*np.exp(-(P_zeta6**2)*Fo_P)*np.cos(P_zeta6*xstar)   
+                        P6=P_C1*np.exp(-(P_zeta1**2)*Fo_P)*np.cos(P_zeta1*xstar)+P_C2*np.exp(-(P_zeta2**2)*Fo_P)*np.cos(P_zeta2*xstar)+P_C3*np.exp(-(P_zeta3**2)*Fo_P)*np.cos(P_zeta3*xstar)+P_C4*np.exp(-(P_zeta4**2)*Fo_P)*np.cos(P_zeta4*xstar)+P_C5*np.exp(-(P_zeta5**2)*Fo_P)*np.cos(P_zeta5*xstar)+P_C6*np.exp(-(P_zeta6**2)*Fo_P)*np.cos(P_zeta6*xstar)
+                        P7=P_C1*np.exp(-(P_zeta1**2)*Fo_P)*np.cos(P_zeta1*xstar)+P_C2*np.exp(-(P_zeta2**2)*Fo_P)*np.cos(P_zeta2*xstar)+P_C3*np.exp(-(P_zeta3**2)*Fo_P)*np.cos(P_zeta3*xstar)+P_C4*np.exp(-(P_zeta4**2)*Fo_P)*np.cos(P_zeta4*xstar)+P_C5*np.exp(-(P_zeta5**2)*Fo_P)*np.cos(P_zeta5*xstar)+P_C6*np.exp(-(P_zeta6**2)*Fo_P)*np.cos(P_zeta6*xstar)+P_C7*np.exp(-(P_zeta7**2)*Fo_P)*np.cos(P_zeta7*xstar)
+                        P8=P_C1*np.exp(-(P_zeta1**2)*Fo_P)*np.cos(P_zeta1*xstar)+P_C2*np.exp(-(P_zeta2**2)*Fo_P)*np.cos(P_zeta2*xstar)+P_C3*np.exp(-(P_zeta3**2)*Fo_P)*np.cos(P_zeta3*xstar)+P_C4*np.exp(-(P_zeta4**2)*Fo_P)*np.cos(P_zeta4*xstar)+P_C5*np.exp(-(P_zeta5**2)*Fo_P)*np.cos(P_zeta5*xstar)+P_C6*np.exp(-(P_zeta6**2)*Fo_P)*np.cos(P_zeta6*xstar)+P_C7*np.exp(-(P_zeta7**2)*Fo_P)*np.cos(P_zeta7*xstar)+P_C8*np.exp(-(P_zeta8**2)*Fo_P)*np.cos(P_zeta8*xstar)
+                        P9=P_C1*np.exp(-(P_zeta1**2)*Fo_P)*np.cos(P_zeta1*xstar)+P_C2*np.exp(-(P_zeta2**2)*Fo_P)*np.cos(P_zeta2*xstar)+P_C3*np.exp(-(P_zeta3**2)*Fo_P)*np.cos(P_zeta3*xstar)+P_C4*np.exp(-(P_zeta4**2)*Fo_P)*np.cos(P_zeta4*xstar)+P_C5*np.exp(-(P_zeta5**2)*Fo_P)*np.cos(P_zeta5*xstar)+P_C6*np.exp(-(P_zeta6**2)*Fo_P)*np.cos(P_zeta6*xstar)+P_C7*np.exp(-(P_zeta7**2)*Fo_P)*np.cos(P_zeta7*xstar)+P_C8*np.exp(-(P_zeta8**2)*Fo_P)*np.cos(P_zeta8*xstar)+P_C9*np.exp(-(P_zeta9**2)*Fo_P)*np.cos(P_zeta9*xstar)
+                        P=P9
                     else:
-                        P=P_C1*np.exp(-(P_zeta1**2)*Fo_P)*np.cos(P_zeta1*xstar)
+                        P6=P_C1*np.exp(-(P_zeta1**2)*Fo_P)*np.cos(P_zeta1*xstar)+P_C2*np.exp(-(P_zeta2**2)*Fo_P)*np.cos(P_zeta2*xstar)+P_C3*np.exp(-(P_zeta3**2)*Fo_P)*np.cos(P_zeta3*xstar)+P_C4*np.exp(-(P_zeta4**2)*Fo_P)*np.cos(P_zeta4*xstar)+P_C5*np.exp(-(P_zeta5**2)*Fo_P)*np.cos(P_zeta5*xstar)+P_C6*np.exp(-(P_zeta6**2)*Fo_P)*np.cos(P_zeta6*xstar)
+                        P7=P6
+                        P8=P7
+                        P9=P8
+                        P=P6
+                    #Err6_7=np.abs(Tinit-Tamb)*np.abs(P6-P7)/P7
+                    #print(Err6_7)
                     #if P>1:
                     #    print("P is %4.4f" %(P))
                     #    print("Unrealistic P is found!")
@@ -221,25 +251,45 @@ def calc_whole(H,R,zLoc,rLoc,tsample,rho,cp,hzH,hR,kz,kr,Tinit,Tamb,GridMap,Ncel
                 rstar=rLoc[m,n]/R
 
                 if Fo_C<0.2:
-                    C=C_C1*np.exp(-(C_zeta1**2)*Fo_C)*scipy.special.j0(C_zeta1*rstar)+C_C2*np.exp(-(C_zeta2**2)*Fo_C)*scipy.special.j0(C_zeta2*rstar)+C_C3*np.exp(-(C_zeta3**2)*Fo_C)*scipy.special.j0(C_zeta3*rstar)+C_C4*np.exp(-(C_zeta4**2)*Fo_C)*scipy.special.j0(C_zeta4*rstar)+C_C5*np.exp(-(C_zeta5**2)*Fo_C)*scipy.special.j0(C_zeta5*rstar)+C_C6*np.exp(-(C_zeta6**2)*Fo_C)*scipy.special.j0(C_zeta6*rstar)     
+                    C6=C_C1*np.exp(-(C_zeta1**2)*Fo_C)*scipy.special.j0(C_zeta1*rstar)+C_C2*np.exp(-(C_zeta2**2)*Fo_C)*scipy.special.j0(C_zeta2*rstar)+C_C3*np.exp(-(C_zeta3**2)*Fo_C)*scipy.special.j0(C_zeta3*rstar)+C_C4*np.exp(-(C_zeta4**2)*Fo_C)*scipy.special.j0(C_zeta4*rstar)+C_C5*np.exp(-(C_zeta5**2)*Fo_C)*scipy.special.j0(C_zeta5*rstar)+C_C6*np.exp(-(C_zeta6**2)*Fo_C)*scipy.special.j0(C_zeta6*rstar)
+                    C7=C_C1*np.exp(-(C_zeta1**2)*Fo_C)*scipy.special.j0(C_zeta1*rstar)+C_C2*np.exp(-(C_zeta2**2)*Fo_C)*scipy.special.j0(C_zeta2*rstar)+C_C3*np.exp(-(C_zeta3**2)*Fo_C)*scipy.special.j0(C_zeta3*rstar)+C_C4*np.exp(-(C_zeta4**2)*Fo_C)*scipy.special.j0(C_zeta4*rstar)+C_C5*np.exp(-(C_zeta5**2)*Fo_C)*scipy.special.j0(C_zeta5*rstar)+C_C6*np.exp(-(C_zeta6**2)*Fo_C)*scipy.special.j0(C_zeta6*rstar)+C_C7*np.exp(-(C_zeta7**2)*Fo_C)*scipy.special.j0(C_zeta7*rstar)
+                    C8=C_C1*np.exp(-(C_zeta1**2)*Fo_C)*scipy.special.j0(C_zeta1*rstar)+C_C2*np.exp(-(C_zeta2**2)*Fo_C)*scipy.special.j0(C_zeta2*rstar)+C_C3*np.exp(-(C_zeta3**2)*Fo_C)*scipy.special.j0(C_zeta3*rstar)+C_C4*np.exp(-(C_zeta4**2)*Fo_C)*scipy.special.j0(C_zeta4*rstar)+C_C5*np.exp(-(C_zeta5**2)*Fo_C)*scipy.special.j0(C_zeta5*rstar)+C_C6*np.exp(-(C_zeta6**2)*Fo_C)*scipy.special.j0(C_zeta6*rstar)+C_C7*np.exp(-(C_zeta7**2)*Fo_C)*scipy.special.j0(C_zeta7*rstar)+C_C8*np.exp(-(C_zeta8**2)*Fo_C)*scipy.special.j0(C_zeta8*rstar)
+                    C9=C_C1*np.exp(-(C_zeta1**2)*Fo_C)*scipy.special.j0(C_zeta1*rstar)+C_C2*np.exp(-(C_zeta2**2)*Fo_C)*scipy.special.j0(C_zeta2*rstar)+C_C3*np.exp(-(C_zeta3**2)*Fo_C)*scipy.special.j0(C_zeta3*rstar)+C_C4*np.exp(-(C_zeta4**2)*Fo_C)*scipy.special.j0(C_zeta4*rstar)+C_C5*np.exp(-(C_zeta5**2)*Fo_C)*scipy.special.j0(C_zeta5*rstar)+C_C6*np.exp(-(C_zeta6**2)*Fo_C)*scipy.special.j0(C_zeta6*rstar)+C_C7*np.exp(-(C_zeta7**2)*Fo_C)*scipy.special.j0(C_zeta7*rstar)+C_C8*np.exp(-(C_zeta8**2)*Fo_C)*scipy.special.j0(C_zeta8*rstar)+C_C9*np.exp(-(C_zeta9**2)*Fo_C)*scipy.special.j0(C_zeta9*rstar)
+                    C=C9
                 else:
-                    C=C_C1*np.exp(-(C_zeta1**2)*Fo_C)*scipy.special.j0(C_zeta1*rstar)
+                    C6=C_C1*np.exp(-(C_zeta1**2)*Fo_C)*scipy.special.j0(C_zeta1*rstar)+C_C2*np.exp(-(C_zeta2**2)*Fo_C)*scipy.special.j0(C_zeta2*rstar)+C_C3*np.exp(-(C_zeta3**2)*Fo_C)*scipy.special.j0(C_zeta3*rstar)+C_C4*np.exp(-(C_zeta4**2)*Fo_C)*scipy.special.j0(C_zeta4*rstar)+C_C5*np.exp(-(C_zeta5**2)*Fo_C)*scipy.special.j0(C_zeta5*rstar)+C_C6*np.exp(-(C_zeta6**2)*Fo_C)*scipy.special.j0(C_zeta6*rstar)
+                    C7=C6
+                    C8=C7
+                    C9=C8
+                    C=C6
                 #if C>1:
                 #    print("C is %4.4f" %(C))
                 #    print("Unrealistic C is found!")
-                
+                Temp6=P6*C6*(Tinit-Tamb)+Tamb
+                Temp7=P7*C7*(Tinit-Tamb)+Tamb
+                Temp8=P8*C8*(Tinit-Tamb)+Tamb
+                Temp9=P9*C9*(Tinit-Tamb)+Tamb
+                Err6_9=np.abs(Temp6-Temp9)*100/Temp9
+                Err7_9=np.abs(Temp7-Temp9)*100/Temp9
+                Err8_9=np.abs(Temp8-Temp9)*100/Temp9
+                #print(Err6_9)
+                #print(Err7_9)
+                #print(Err8_9)
                 #print("C is %4.4f" %(C))
     # Overall solution is the combination of planar and cylindrical
-                Theta=P*C
+                #Theta=P*C
                 #print("For xstar=%4.4f and rstar=%4.4f, P is %4.4f and C is %4.4f " %(xstar,rstar,P,C))
-                Temp_analytical=Theta*(Tinit-Tamb)+Tamb
+                #Temp_analytical=Theta*(Tinit-Tamb)+Tamb
+                Temp_analytical=Temp9
                 T_analy_all[count,i]=Temp_analytical
+                Err_all[i,:]=[Err6_9,Err7_9,Err8_9]
                 count=count+1
         
         Tavg=np.mean(T_analy_all[:,i],axis=0)
+        print(Tavg)
         Tavg_all[i]=Tavg
 
-    return (T_analy_all,Tavg_all)
+    return (T_analy_all,Tavg_all,Err_all)
 
 
 def eigfcnplanar(zeta,Bi):

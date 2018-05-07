@@ -167,7 +167,7 @@ def uniformgen(GridMap,kr,kz,hR,hz0,hzH,rho,cp,R,H,Ncellr,Ncellz,delr,delz,delt,
     return (T_all,Tavg_all)
 
 # This functions solves with Arrhenius generation term if you want to have Qgen due to Arrhenius only, give qgen=0
-def Arrheniusgen(GridMap,kr,kz,hR,hz0,hzH,rho,cp,R,H,Ncellr,Ncellz,delr,delz,delt,Tinit,Tamb,tsample,qgen,Q0,E,Picard,Newton,Nmax,tol,A_antoine,B_antoine,C_antoine,Mgas,P0):
+def Arrheniusgen(GridMap,kr,kz,hR,hz0,hzH,rho,cp,R,H,Ncellr,Ncellz,delr,delz,delt,Tinit,Tamb,tsample,qgen,Q0,E,Picard,Newton,Nmax,tol,A_antoine,B_antoine,C_antoine,Mgas,P0,GM):
     Runicons=8.314 # Universal gas constant in J/molK
     Vol_T=(np.pi*R**2)*H
     mtot=rho*Vol_T
@@ -312,7 +312,14 @@ def Arrheniusgen(GridMap,kr,kz,hR,hz0,hzH,rho,cp,R,H,Ncellr,Ncellz,delr,delz,del
                 #print("Condition number of Coeffk is %8.8f" %(np.linalg.cond(Coeffk)))
                 #print(Coeff)
                 #print(bk)
-                Tknew=np.linalg.solve(Coeff,bk)
+                #TknewLU=np.linalg.solve(Coeff,bk)
+                if GM==0:
+                    Tknew=np.linalg.solve(Coeff,bk)
+                else: 
+                    Tgmres=gmres(Coeff, bk, x0=None, tol=tol)
+                    Tknew=np.reshape(np.array(Tgmres[0]),(Ncellr*Ncellz,1))
+                    gmresinfo=Tgmres[1]
+                
                 step=Tknew-Tk
                 #for linesearchstep in range(1,2):
                 for m in range(1,Ncellr+1):
@@ -334,7 +341,7 @@ def Arrheniusgen(GridMap,kr,kz,hR,hz0,hzH,rho,cp,R,H,Ncellr,Ncellz,delr,delz,del
                         print("Maximum error %6.6f is higher than the tolerance after Nmax iterations!" %(Maxerr))
                     if Maxerr>10**6:
                         print("Picard iteration diverged at t=%4.4f"%(t))
-                        return (T_all,Pvap_all,mG_all,Tavg_all,VolL_all)
+                        return (T_all,Tavg_all)
                 else:
                     break
             #T=Tknew

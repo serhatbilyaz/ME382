@@ -136,12 +136,13 @@ def Pvap_overtime(Pvap_FD_all,tsample):
     pyplot.savefig('Pvap_overt.pdf', bbox_inches='tight')
     return
 
-def Tavg_overtime(Tavg_FD_all,Tavg_analy_all,tsample):
+def Tavg_overtime(Tavg_FD_all,Tavg_analy_all,Expdataarray,tsample):
     print("Creating lineplot of Tavg over time ...")
     
     pyplot.figure()
     pyplot.plot(tsample/60,Tavg_FD_all-273,'--',linewidth=3, label="Finite Difference")
     pyplot.plot(tsample/60,Tavg_analy_all-273,linewidth=3, label="Analytical (No Qgen)")
+    pyplot.plot(Expdataarray[:,0],Expdataarray[:,1],'-.',linewidth=3,label="Experimental")
 
     bounds=np.array([0, 200])
     pyplot.ylim(bounds) 
@@ -151,4 +152,22 @@ def Tavg_overtime(Tavg_FD_all,Tavg_analy_all,tsample):
     pyplot.legend(loc='best')
     pyplot.xticks(np.arange(0, tsample[tsample.shape[0]-1]/60, step=5))
     pyplot.savefig('Tavg_overt.pdf', bbox_inches='tight')
+    return
+
+def Analy_err_overtime(Analy_err_all,tsample):
+    print("Creating lineplot of truncation errors of analytical solution over time ...")
+    
+    pyplot.figure()
+    pyplot.plot(tsample/60,Analy_err_all[:,0],'-',linewidth=3, label="btw 6 and 9 terms")
+    pyplot.plot(tsample/60,Analy_err_all[:,1],'--',linewidth=3, label="btw 7 and 9 terms")
+    pyplot.plot(tsample/60,Analy_err_all[:,2],'-.',linewidth=3, label="btw 8 and 9 terms")
+ 
+    #bounds=np.array([0, 1])
+    #pyplot.ylim(bounds) 
+    pyplot.xlabel('t (min)', fontsize=10)
+    pyplot.ylabel('% Error', fontsize=10)
+    pyplot.title('Change of truncation error for analytical solution')
+    pyplot.legend(loc='best')
+    pyplot.xticks(np.arange(0, tsample[tsample.shape[0]-1]/60, step=5))
+    pyplot.savefig('Analy_err_overt.pdf', bbox_inches='tight')
     return
