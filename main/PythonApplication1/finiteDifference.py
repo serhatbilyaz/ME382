@@ -320,16 +320,16 @@ def Arrheniusgen(GridMap,kr,kz,hR,hz0,hzH,rho,cp,R,H,Ncellr,Ncellz,delr,delz,del
                     Tknew=np.reshape(np.array(Tgmres[0]),(Ncellr*Ncellz,1))
                     gmresinfo=Tgmres[1]
                 
-                step=Tknew-Tk
+                #step=Tknew-Tk
                 #for linesearchstep in range(1,2):
-                for m in range(1,Ncellr+1):
-                   for n in range(1,Ncellz+1):
-                     C=Q0*np.exp(-E/Runicons/Tknew[GridMap[m-1,n-1],0])
-                     bknew[GridMap[m-1,n-1],0]=b[GridMap[m-1,n-1],0]-C*Vol
+                #for m in range(1,Ncellr+1):
+                #   for n in range(1,Ncellz+1):
+                #     C=Q0*np.exp(-E/Runicons/Tknew[GridMap[m-1,n-1],0])
+                #     bknew[GridMap[m-1,n-1],0]=b[GridMap[m-1,n-1],0]-C*Vol
                         
-                f1=np.matmul(Coeff,Tk)-bk
-                f2=np.matmul(Coeff,Tknew)-bknew
-                fdif=f2-f1
+                #f1=np.matmul(Coeff,Tk)-bk
+                #f2=np.matmul(Coeff,Tknew)-bknew
+                #fdif=f2-f1
                 #print("Maximum of f2-f1 is %6.6f"%(np.max(fdif)))
 
                 Maxerr=np.max(np.abs(Tknew-Tk))
@@ -434,7 +434,7 @@ def Arrheniusgen(GridMap,kr,kz,hR,hz0,hzH,rho,cp,R,H,Ncellr,Ncellz,delr,delz,del
         #print("mL is %5.6f"%(mL))
         #mG=mtot-mL
         #print("mG is %2.12f"%(mG))
-        print("Tavg is %4.4f"%(Tavg))
+        #print("Tavg is %4.4f"%(Tavg))
         #Pvap_all[i]=Pvap
         #mG_all[i]=mG
         #VolL_all[i]=Vol_L

@@ -22,10 +22,10 @@ print('%s'%(Name))
 R=0.009 # Radius of the cylinder (m)
 H=0.065 # Height of the cylinder (m)
 
-Ncellr=10 # Number of cells in r direction
-Ncellz=10 # Number of cells in z direction
+Ncellr=60 # Number of cells in r direction
+Ncellz=60 # Number of cells in z direction
 
-delt=1 # Time step in seconds
+delt=0.5 # Time step in seconds
 tfinal=50*60 # Final time in seconds
 
 Tinit=273+25 # Uniform initial temperature 
@@ -101,8 +101,8 @@ T_FD_all=np.empty((Ncellr*Ncellz,tsample.shape[0]))*np.nan
 T_analy_all=np.empty((Ncellr*Ncellz,tsample.shape[0]))*np.nan
 
 # Finite Difference Solution
-#FD_all_data=finiteDifference.uniformgen(GridMapFD,kr,kz,hR,hz0,hzH,rho,cp,R,H,Ncellr,Ncellz,delr,delz,delt,Tinit,Tamb,tsample,qgen,A_antoine,B_antoine,C_antoine,Mgas,P0, GM, tol)
 tic=time.time()
+#FD_all_data=finiteDifference.uniformgen(GridMapFD,kr,kz,hR,hz0,hzH,rho,cp,R,H,Ncellr,Ncellz,delr,delz,delt,Tinit,Tamb,tsample,qgen,A_antoine,B_antoine,C_antoine,Mgas,P0, GM, tol)
 FD_all_data=finiteDifference.Arrheniusgen(GridMapFD,kr,kz,hR,hz0,hzH,rho,cp,R,H,Ncellr,Ncellz,delr,delz,delt,Tinit,Tamb,tsample,qgen,Q0,Ea,Picard,Newton,Nmax,tol,A_antoine,B_antoine,C_antoine,Mgas,P0,GM)
 time_FD=time.time()-tic
 T_FD_all=FD_all_data[0]
@@ -152,19 +152,19 @@ np.savetxt('%s_parameters.csv'%Name, parameters)
 
 print("files written to csv")
 
-#tplot=1200
+tplot=2000
 # Obtain contour subplots 
 #contourplot.compareanaly(T_FD_all,T_analy_all,rLoc,zLoc,tsample,delt,Ncellr,Ncellz,tplot)
 
 # Obtain lineplots
 # Plotting along r at certain z
-#zplot=H/2 # Plot location
-#lineplot.alongr_plotT(T_FD_all,T_analy_all,rLoc,zLoc,tsample,R,delz,delt,Ncellr,Ncellz,zplot,tplot)
+zplot=H/2 # Plot location
+lineplot.alongr_plotT(T_FD_all,T_analy_all,rLoc,zLoc,tsample,R,delz,delt,Ncellr,Ncellz,zplot,tplot)
 # Plotting along z at certain r
-#rplot=R/2 # Plot location
-#lineplot.alongz_plotT(T_FD_all,T_analy_all,rLoc,zLoc,tsample,H,delr,delt,Ncellr,Ncellz,rplot,tplot)
+rplot=R/2 # Plot location
+lineplot.alongz_plotT(T_FD_all,T_analy_all,rLoc,zLoc,tsample,H,delr,delt,Ncellr,Ncellz,rplot,tplot)
 # Plotting over t on r=R and at certain z
-#lineplot.surfaceTovertime_onR(T_FD_all,T_analy_all,GridMap,GridMapFD,zLoc,tsample,R,delz,Ncellr,zplot)
+lineplot.surfaceTovertime_onR(T_FD_all,T_analy_all,GridMap,GridMapFD,zLoc,tsample,R,delz,Ncellr,zplot)
 # Plotting vent gas amount over time
 #lineplot.mG_overtime(mG_FD_all,tsample)
 # Plotting Pvapor over time
