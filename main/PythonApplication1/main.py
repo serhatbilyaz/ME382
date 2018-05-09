@@ -22,10 +22,10 @@ print('%s'%(Name))
 R=0.009 # Radius of the cylinder (m)
 H=0.065 # Height of the cylinder (m)
 
-Ncellr=60 # Number of cells in r direction
-Ncellz=60 # Number of cells in z direction
+Ncellr=10 # Number of cells in r direction
+Ncellz=10 # Number of cells in z direction
 
-delt=0.5 # Time step in seconds
+delt=1 # Time step in seconds
 tfinal=50*60 # Final time in seconds
 
 Tinit=273+25 # Uniform initial temperature 
