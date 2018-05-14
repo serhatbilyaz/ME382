@@ -16,14 +16,14 @@ import pandas as pd
 import csv
 import time
 
-Name='AG2'
+Name='NG9'
 print('%s'%(Name))
 # Inputs
 R=0.009 # Radius of the cylinder (m)
 H=0.065 # Height of the cylinder (m)
 
-Ncellr=10 # Number of cells in r direction
-Ncellz=10 # Number of cells in z direction
+Ncellr=60 # Number of cells in r direction
+Ncellz=60 # Number of cells in z direction
 
 delt=1 # Time step in seconds
 tfinal=50*60 # Final time in seconds
@@ -50,7 +50,8 @@ Q0=1*10**22  # Arrhenius generation term constant
 Picard=1# Use Picard's method
 Newton=0  # Use Newton's method (Actually, don't use it now, it is not stable)
 Nmax=10000  # Max number of iterations
-tol=1*10**-4 # Accepted tolerance, also used for GMRES
+tolPic=1*10**-4 # Accepted tolerance used for Picard's iteration
+tolGMRES=1*10**-5 # Accepted tolerance used for GMRES solver
 GM=1    #if GM=0, LU solver, if GM=1 gmres solver
 
 #Inputs for vent gas release
@@ -102,8 +103,8 @@ T_analy_all=np.empty((Ncellr*Ncellz,tsample.shape[0]))*np.nan
 
 # Finite Difference Solution
 tic=time.time()
-#FD_all_data=finiteDifference.uniformgen(GridMapFD,kr,kz,hR,hz0,hzH,rho,cp,R,H,Ncellr,Ncellz,delr,delz,delt,Tinit,Tamb,tsample,qgen,A_antoine,B_antoine,C_antoine,Mgas,P0, GM, tol)
-FD_all_data=finiteDifference.Arrheniusgen(GridMapFD,kr,kz,hR,hz0,hzH,rho,cp,R,H,Ncellr,Ncellz,delr,delz,delt,Tinit,Tamb,tsample,qgen,Q0,Ea,Picard,Newton,Nmax,tol,A_antoine,B_antoine,C_antoine,Mgas,P0,GM)
+#FD_all_data=finiteDifference.uniformgen(GridMapFD,kr,kz,hR,hz0,hzH,rho,cp,R,H,Ncellr,Ncellz,delr,delz,delt,Tinit,Tamb,tsample,qgen,A_antoine,B_antoine,C_antoine,Mgas,P0, GM, tolGMRES)
+FD_all_data=finiteDifference.Arrheniusgen(GridMapFD,kr,kz,hR,hz0,hzH,rho,cp,R,H,Ncellr,Ncellz,delr,delz,delt,Tinit,Tamb,tsample,qgen,Q0,Ea,Picard,Newton,Nmax,tolPic,tolGMRES,A_antoine,B_antoine,C_antoine,Mgas,P0,GM)
 time_FD=time.time()-tic
 T_FD_all=FD_all_data[0]
 Tavg_FD_all=FD_all_data[1]
@@ -130,18 +131,15 @@ with writing_analy:
     writer.writerows(T_analy_all)
 
 # writing FDavg temp to csv file 
-#writing_avgFD = open('%s_FDavg.csv'%Name, 'w')
-#with writing_avgFD:
-#    writer = csv.writer(writing_avgFD)
-#    writer.writerows(Tavg_FD_all)
 np.savetxt('%s_FDavg.csv'%Name,Tavg_FD_all)
 
 # writing FDavg temp to csv file 
-#writing_avgAnaly = open('%s_Analyavg.csv'%Name, 'w')
-#with writing_avgAnaly:
-#    writer = csv.writer(writing_avgAnaly)
-#    writer.writerows(Tavg_analy_all)
 np.savetxt('%s_Analyavg.csv'%Name,Tavg_analy_all)
+
+writing_analyErr = open('%s_analyErr_all.csv'%Name, 'w')
+with writing_analyErr:
+    writer = csv.writer(writing_analyErr)
+    writer.writerows(Analy_err_all)
 
 
 parameters = [Ncellr, Ncellz, delt, tfinal, time_FD, time_Analy]

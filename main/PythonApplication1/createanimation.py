@@ -25,28 +25,29 @@ def compareanaly(T_FD_all,T_analy_all,rLoc,zLoc,tsample,Ncellr,Ncellz):
         FD=ax1.contourf(rLoc,zLoc,np.empty((Ncellz,Ncellr)),np.arange(25,200,1))
         Analy=ax2.contourf(rLoc,zLoc,np.empty((Ncellz,Ncellr)),np.arange(25,200,1))
         cbar=fig.colorbar(FD,ax=ax1)
-        cbar.ax.set_ylabel('Temperature (K)')
+        cbar.ax.set_ylabel('Temperature (C)')
         cbar2=fig.colorbar(Analy,ax=ax2)
-        cbar2.ax.set_ylabel('Temperature (K)')
+        cbar2.ax.set_ylabel('Temperature (C)')
         ax1.set_title("Finite Difference at t=0 s")
         ax2.set_title("Analytical at t=0 s")
         return (FD,Analy)
 
     def animate(i):
-        T_FD=T_FD_all[:,i]
+        T_FD=T_FD_all[:,i*100]
         T_FD=T_FD.reshape((Ncellz,Ncellr))
-        T_analy=T_analy_all[:,i]
+        T_analy=T_analy_all[:,i*100]
         T_analy=T_analy.reshape((Ncellz,Ncellr))
-
-        t=tsample[i]
-        FD=ax1.contourf(rLoc,zLoc,T_FD-273,np.arange(25,200,1))
-        Analy=ax2.contourf(rLoc,zLoc,T_analy-273,np.arange(25,200,1))
+        
+        t=tsample[i*100]
+        print("t=%2.2f"%t)
+        FD=ax1.contourf(rLoc,zLoc,T_FD-273,np.arange(25,160,1))
+        Analy=ax2.contourf(rLoc,zLoc,T_analy-273,np.arange(25,160,1))
         ax1.set_title("Finite Difference at t=%4.2f s" %(t))
         ax2.set_title("Analytical at t=%4.2f s" %(t))
 
         
         return (FD,Analy)
 
-    anim=animation.FuncAnimation(fig,animate,init_func=init,frames=tsample.shape[0],interval=1000,repeat_delay=1000)
+    anim=animation.FuncAnimation(fig,animate,init_func=init,frames=int((tsample.shape[0]-1)/100),interval=1000,repeat_delay=1000)
     anim.save('compare_contours.mp4',fps=8,extra_args=['-vcodec', 'libx264'])
     #pyplot.show()

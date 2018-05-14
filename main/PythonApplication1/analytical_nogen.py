@@ -282,7 +282,7 @@ def calc_whole(H,R,zLoc,rLoc,tsample,rho,cp,hzH,hR,kz,kr,Tinit,Tamb,GridMap,Ncel
                 #Temp_analytical=Theta*(Tinit-Tamb)+Tamb
                 Temp_analytical=Temp9
                 T_analy_all[count,i]=Temp_analytical
-                if i==1:
+                if count==0:
                     Err_all[i,:]=[Err6_9,Err7_9,Err8_9]
                 if Err_all[i,0]<Err6_9:
                     Err_all[i,0]=Err6_9
